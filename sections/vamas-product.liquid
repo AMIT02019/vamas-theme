@@ -79,7 +79,7 @@
       <a href="#vamas-reviews" class="vamas-product-rating-link">{{ section.settings.read_reviews_text | default: 'Read reviews ↓' }}</a>
     </div>
 
-    <div class="vamas-product-price" data-off-label="{{ section.settings.off_label | default: 'off' }}">
+    <div class="vamas-product-price">
       <span class="vamas-product-price__now">{{ current_variant.price | money }}</span>
       {% if on_sale %}
         <span class="vamas-product-price__old">{{ current_variant.compare_at_price | money }}</span>
@@ -162,13 +162,11 @@
         </div>
       </div>
 
-      <button type="submit" class="vamas-atc vamas-product-btn-atc" id="vamas-product-atc-btn"
-              data-product-id="{{ product.id }}"
-              data-atc-text="{{ section.settings.atc_text | default: 'ADD TO CART' }}"
-              data-sold-out-text="{{ section.settings.sold_out_text | default: 'SOLD OUT' }}"
-              {% unless current_variant.available %}disabled style="opacity:.5;cursor:not-allowed;"{% endunless %}>
-        {% if current_variant.available %}{{ section.settings.atc_text | default: 'ADD TO CART' }}{% else %}{{ section.settings.sold_out_text | default: 'SOLD OUT' }}{% endif %}
-      </button>
+      {% if current_variant.available %}
+        <button type="submit" class="vamas-atc vamas-product-btn-atc" id="vamas-product-atc-btn" data-product-id="{{ product.id }}">{{ section.settings.atc_text | default: 'ADD TO CART' }}</button>
+      {% else %}
+        <button type="button" class="vamas-atc vamas-product-btn-atc" disabled style="opacity:.5;cursor:not-allowed;">{{ section.settings.sold_out_text | default: 'SOLD OUT' }}</button>
+      {% endif %}
       {% if section.settings.show_buy_now %}
         <button type="button" class="vamas-product-btn-buy" id="vamas-product-buy-btn">&#9889; {{ section.settings.buy_now_text | default: 'BUY NOW' }}</button>
       {% endif %}

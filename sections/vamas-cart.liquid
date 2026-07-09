@@ -1,218 +1,118 @@
 {{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
-
-<div class="vamas-cart-breadcrumb">
-  <a href="/">{{ section.settings.breadcrumb_home | default: 'Home' }}</a><span>&#8250;</span><span>{{ section.settings.page_title | default: 'My Cart' }}</span>
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>&#8250;</span><span>My Cart</span>
 </div>
 
-<div class="vamas-cart-page-header">
+<div class="cart-page-header">
   <div style="display:flex;align-items:center;">
-    <span class="vamas-cart-page-title">{{ section.settings.page_title | default: 'My Cart' }}</span>
-    <span class="vamas-cart-count-badge" id="vamas-cart-count-badge" data-items-label="{{ section.settings.items_label | default: 'items' }}">{{ cart.item_count }} {{ section.settings.items_label | default: 'items' }}</span>
+    <span class="cart-page-title">My Cart</span>
+    <span class="cart-count-badge" id="cart-count-badge">0 items</span>
   </div>
-  <a href="/collections/all" class="vamas-cart-continue-link">
+  <a href="collection.html" class="continue-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-    {{ section.settings.continue_shopping_text | default: 'Continue Shopping' }}
+    Continue Shopping
   </a>
 </div>
 
-{% if cart.item_count > 0 %}
-<div class="vamas-cart-layout">
+<div class="cart-layout">
 
-  <div id="vamas-cart-left">
-    {% if section.settings.show_free_delivery_bar %}
-      {% assign threshold = section.settings.free_delivery_threshold | times: 100 %}
-      {% assign remaining = threshold | minus: cart.total_price %}
-      <div class="vamas-cart-free-del-box" id="vamas-cart-fdel-box" data-threshold="{{ threshold }}" {% if remaining <= 0 %}style="display:none;"{% endif %}>
-        <div class="vamas-cart-fdel-top">
-          <div class="vamas-cart-fdel-label">{{ section.settings.free_delivery_prefix | default: 'Add' }} <strong id="vamas-cart-fdel-amount">{{ remaining | money }}</strong> {{ section.settings.free_delivery_suffix | default: 'more for free delivery!' }}</div>
-        </div>
-        <div class="vamas-cart-fdel-track"><div class="vamas-cart-fdel-fill" id="vamas-cart-fdel-fill" style="width:{{ cart.total_price | times: 100.0 | divided_by: threshold | at_most: 100 }}%"></div></div>
+  <div id="cart-left">
+    <div class="free-del-box" id="free-del-box">
+      <div class="fdel-top">
+        <div class="fdel-label">Add <strong id="fdel-amount">Rs.—</strong> more for free delivery!</div>
       </div>
-      <div class="vamas-cart-fdel-success" id="vamas-cart-fdel-success" {% if remaining > 0 %}style="display:none;"{% endif %}>&#127881; {{ section.settings.free_delivery_unlocked | default: "You've unlocked FREE delivery!" }}</div>
-    {% endif %}
+      <div class="fdel-track"><div class="fdel-fill" id="fdel-fill" style="width:0%"></div></div>
+    </div>
+    <div class="fdel-success" id="fdel-success" style="display:none;">&#127881; You've unlocked <strong>FREE delivery!</strong></div>
 
-    {% form 'cart', cart, id: 'vamas-cart-form' %}
-      <div class="vamas-cart-items-wrap">
-        <div class="vamas-cart-items-head">
-          <div>{{ section.settings.col_product | default: 'PRODUCT' }}</div>
-          <div>{{ section.settings.col_price | default: 'PRICE' }}</div>
-          <div>{{ section.settings.col_qty | default: 'QUANTITY' }}</div>
-          <div style="text-align:right;">{{ section.settings.col_subtotal | default: 'SUBTOTAL' }}</div>
-          <div></div>
-        </div>
-        <div id="vamas-cart-items-body">
-          {% for item in cart.items %}
-            <div class="vamas-cart-item" data-line="{{ forloop.index }}" data-key="{{ item.key }}">
-              <div class="vamas-cart-ci-product">
-                <a href="{{ item.url }}" class="vamas-cart-ci-img">
-                  {% if item.image %}<img src="{{ item.image | img_url: '160x192', crop: 'center' }}" alt="{{ item.image.alt | escape | default: item.product.title }}" loading="lazy">{% endif %}
-                </a>
-                <div>
-                  <a href="{{ item.url }}" style="text-decoration:none;"><div class="vamas-cart-ci-name">{{ item.product.title }}</div></a>
-                  <div class="vamas-cart-ci-type">{{ item.product.type }}</div>
-                  {% if item.variant.title != 'Default Title' %}
-                    <div class="vamas-cart-ci-attrs">
-                      {% for option in item.options_with_values %}
-                        <span class="vamas-cart-ci-attr">{{ option.name }}: {{ option.value }}</span>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                  <div class="vamas-cart-ci-actions">
-                    <button type="button" class="vamas-cart-ci-action-btn vamas-cart-remove-btn" data-line="{{ forloop.index }}">{{ section.settings.remove_text | default: 'Remove' }}</button>
-                  </div>
-                </div>
-              </div>
-              <div class="vamas-cart-ci-price">
-                {{ item.final_price | money }}
-                {% if item.original_price > item.final_price %}
-                  <div class="vamas-cart-ci-orig">{{ item.original_price | money }}</div>
-                {% endif %}
-              </div>
-              <div class="vamas-cart-ci-qty">
-                <div class="vamas-cart-qty-control">
-                  <button type="button" class="vamas-cart-qty-btn vamas-cart-qty-minus" data-line="{{ forloop.index }}">&#8722;</button>
-                  <input type="number" class="vamas-cart-qty-num" name="updates[{{ forloop.index0 }}]" data-line="{{ forloop.index }}" value="{{ item.quantity }}" min="0">
-                  <button type="button" class="vamas-cart-qty-btn vamas-cart-qty-plus" data-line="{{ forloop.index }}">&#43;</button>
-                </div>
-              </div>
-              <div class="vamas-cart-ci-subtotal">{{ item.final_line_price | money }}</div>
-              <div class="vamas-cart-ci-remove">
-                <button type="button" class="vamas-cart-ci-remove-btn" data-line="{{ forloop.index }}" aria-label="Remove item">&times;</button>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
+    <div class="cart-items-wrap" id="cart-items-wrap">
+      <div class="cart-items-head">
+        <div>PRODUCT</div><div>PRICE</div><div>QUANTITY</div><div style="text-align:right;">SUBTOTAL</div><div></div>
       </div>
+      <div id="cart-items-body"></div>
+    </div>
 
-      <div class="vamas-cart-order-summary" id="vamas-order-summary-panel">
-        <div class="vamas-cart-os-title">{{ section.settings.summary_title | default: 'ORDER SUMMARY' }}</div>
-
-        {% if section.settings.show_discount_field %}
-          <div class="vamas-cart-coupon-form">
-            <input class="vamas-cart-coupon-input" id="vamas-coupon-input" type="text" placeholder="{{ section.settings.coupon_placeholder | default: 'Enter coupon code' }}" autocomplete="off">
-            <button class="vamas-cart-coupon-btn" type="button" id="vamas-coupon-apply-btn" data-cart-url="{{ routes.cart_url }}">{{ section.settings.apply_text | default: 'APPLY' }}</button>
-          </div>
-          <div class="vamas-cart-coupon-hint">{{ section.settings.coupon_hint | default: 'Discount codes are applied at checkout.' }}</div>
-          {% if cart.cart_level_discount_applications.size > 0 %}
-            {% for discount in cart.cart_level_discount_applications %}
-              <div class="vamas-cart-applied-coupon show">
-                <span class="vamas-cart-applied-tag">{{ discount.title }} (-{{ discount.total_allocated_amount | money }})</span>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endif %}
-
-        <div class="vamas-cart-os-row"><span>{{ section.settings.subtotal_label | default: 'Subtotal' }} (<span id="vamas-cart-item-count-text">{{ cart.item_count }} {{ section.settings.items_label | default: 'items' }}</span>)</span><span id="vamas-cart-subtotal-value">{{ cart.original_total_price | money }}</span></div>
-        <div class="vamas-cart-os-row vamas-cart-os-row--green" id="vamas-cart-discount-row" {% unless cart.total_discount > 0 %}style="display:none;"{% endunless %}><span>{{ section.settings.discount_label | default: 'Discount' }}</span><span id="vamas-cart-discount-value">&minus; {{ cart.total_discount | money }}</span></div>
-        <div class="vamas-cart-os-row"><span>{{ section.settings.delivery_label | default: 'Delivery Charges' }}</span><span>{{ section.settings.delivery_value | default: 'FREE' }}</span></div>
-        <div class="vamas-cart-os-divider"></div>
-        <div class="vamas-cart-os-total"><span>{{ section.settings.total_label | default: 'TOTAL PAYABLE' }}</span><span id="vamas-cart-total-value">{{ cart.total_price | money }}</span></div>
-
-        <button type="submit" name="checkout" class="vamas-cart-btn-checkout">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          {{ section.settings.checkout_text | default: 'PROCEED TO CHECKOUT' }}
-        </button>
-        <a href="/collections/all" class="vamas-cart-btn-continue">{{ section.settings.continue_shopping_text | default: 'Continue Shopping' }}</a>
-
-        {% assign trust_blocks = section.blocks | where: 'type', 'trust_line' %}
-        {% if trust_blocks.size > 0 %}
-          <div class="vamas-cart-trust-mini">
-            {% for block in section.blocks %}
-              {% if block.type == 'trust_line' %}
-                <div class="vamas-cart-tm-item" {{ block.shopify_attributes }}>{{ block.settings.icon }} {{ block.settings.label }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% endif %}
-        {% if section.settings.show_payment_row %}
-          <div class="vamas-cart-pay-row">
-            {% assign pay_methods = section.settings.payment_methods | default: 'UPI, Visa, MC, NetBanking, COD' | split: ',' %}
-            {% for method in pay_methods %}<span class="vamas-cart-pay-icon">{{ method | strip }}</span>{% endfor %}
-          </div>
-        {% endif %}
-      </div>
-    {% endform %}
+    <div class="empty-cart" id="empty-cart">
+      <div class="empty-icon">&#128722;</div>
+      <div class="empty-title">Your cart is empty</div>
+      <div class="empty-sub">Looks like you haven't added anything yet.<br>Explore our handcrafted blouse collection!</div>
+      <a href="collection.html" class="btn-shop">SHOP NOW</a>
+    </div>
   </div>
+
+  <div class="order-summary" id="order-summary-panel">
+    <div class="os-title">ORDER SUMMARY</div>
+
+    <div class="coupon-form">
+      <input class="coupon-input" id="coupon-input" type="text" placeholder="Enter coupon code" autocomplete="off">
+      <button class="coupon-btn" id="coupon-apply-btn" onclick="applyCoupon()">APPLY</button>
+    </div>
+    <div class="coupon-result" id="coupon-result"></div>
+    <div class="applied-coupon" id="applied-coupon">
+      <span class="applied-tag" id="applied-tag"></span>
+      <button class="remove-coupon" onclick="removeCoupon()">Remove</button>
+    </div>
+
+    <div class="os-row"><span>MRP Total (<span id="os-item-count">0 items</span>)</span><span id="os-mrp">Rs.0</span></div>
+    <div class="os-row green"><span>Product Discount</span><span id="os-discount">− Rs.0</span></div>
+    <div class="os-row green" id="coupon-row" style="display:none;"><span>Coupon Discount</span><span id="os-coupon-discount"></span></div>
+    <div class="os-row"><span>Delivery Charges</span><span id="os-delivery">FREE</span></div>
+    <div class="os-divider"></div>
+    <div class="os-total"><span>TOTAL PAYABLE</span><span id="os-total">Rs.0</span></div>
+    <div class="os-saving" id="os-saving" style="display:none;">&#127881; You're saving <strong id="os-saving-amt">Rs.0</strong> on this order!</div>
+
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      PROCEED TO CHECKOUT
+    </button>
+    <button class="btn-continue" onclick="window.location.href='collection.html'">Continue Shopping</button>
+
+    <div class="trust-mini">
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>100% Secure Checkout</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>7-Day Easy Returns</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Ships in 2–3 Business Days</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Handcrafted &amp; Authentic</div>
+    </div>
+    <div class="pay-row">
+      <span class="pay-icon">UPI</span><span class="pay-icon">Visa</span><span class="pay-icon">MC</span><span class="pay-icon">NetBanking</span><span class="pay-icon">COD</span>
+    </div>
+  </div>
+
 </div>
 
-{% comment %} ── You may also like ── {% endcomment %}
-{% if section.settings.show_recommendations %}
-  {% comment %} Shopify's recommendations endpoint requires a product_id for context;
-       the cart has no single "current product", so the most recently added line
-       item is used as a reasonable proxy. {% endcomment %}
-  <div id="vamas-cart-related" data-url="{{ routes.product_recommendations_url }}" data-product-id="{{ cart.items.last.product_id }}"></div>
-{% endif %}
-
-{% else %}
-  {% comment %} ── Empty cart state ── {% endcomment %}
-  <div class="vamas-cart-empty">
-    <div class="vamas-cart-empty__icon">&#128722;</div>
-    <div class="vamas-cart-empty__title">{{ section.settings.empty_title | default: 'Your cart is empty' }}</div>
-    <div class="vamas-cart-empty__sub">{{ section.settings.empty_sub | default: "Looks like you haven't added anything yet. Explore our handcrafted blouse collection!" }}</div>
-    <a href="/collections/all" class="vamas-cart-btn-shop">{{ section.settings.empty_cta_text | default: 'SHOP NOW' }}</a>
+<section class="recently-section">
+  <div class="rs-title">You May Also Like</div>
+  <div class="rs-grid">
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-cobalt.jpg" alt="Velvet Zardozi Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Velvet Zardozi Blouse</div><div class="rs-type">Velvet · Zardozi Work</div><div class="rs-price-row"><span class="rs-price">Rs.1,599</span><span class="rs-old">Rs.2,399</span><span class="rs-off">33% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Velvet Zardozi Blouse','Velvet · Zardozi Work',1599,2399,'assets/prod-cobalt.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-green2.jpg" alt="Gota Patti Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Gota Patti Blouse</div><div class="rs-type">Silk · Gota Patti Work</div><div class="rs-price-row"><span class="rs-price">Rs.999</span><span class="rs-old">Rs.1,599</span><span class="rs-off">38% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Gota Patti Blouse','Silk · Gota Patti Work',999,1599,'assets/prod-green2.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-maroon2.jpg" alt="Chikankari Lucknowi Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Chikankari Lucknowi Blouse</div><div class="rs-type">Cotton Silk · Chikankari</div><div class="rs-price-row"><span class="rs-price">Rs.1,099</span><span class="rs-old">Rs.1,799</span><span class="rs-off">39% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Chikankari Lucknowi Blouse','Cotton Silk · Chikankari',1099,1799,'assets/prod-maroon2.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-darkmaroon.jpg" alt="Chanderi Silk Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Chanderi Silk Blouse</div><div class="rs-type">Chanderi · Block Print</div><div class="rs-price-row"><span class="rs-price">Rs.1,199</span><span class="rs-old">Rs.1,899</span><span class="rs-off">37% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Chanderi Silk Blouse','Chanderi · Block Print',1199,1899,'assets/prod-darkmaroon.jpg')">ADD TO CART</button></div>
+    </div>
   </div>
-{% endif %}
+</section>
+
+<div class="undo-toast" id="undo-toast">
+  <span id="undo-msg">Item removed</span>
+  <button class="undo-btn" id="undo-btn">UNDO</button>
+</div>
+
+<div id="site-footer"></div>
+<div class="wp-float">W</div>
 
 {% schema %}
 {
-  "name": "Vamas Cart",
-  "settings": [
-    { "type": "text", "id": "breadcrumb_home", "label": "Breadcrumb home label", "default": "Home" },
-    { "type": "text", "id": "page_title", "label": "Page title", "default": "My Cart" },
-    { "type": "text", "id": "items_label", "label": "\"items\" label", "default": "items" },
-    { "type": "text", "id": "continue_shopping_text", "label": "Continue shopping text", "default": "Continue Shopping" },
-    { "type": "header", "content": "Free delivery bar" },
-    { "type": "checkbox", "id": "show_free_delivery_bar", "label": "Show free delivery progress bar", "default": true },
-    { "type": "number", "id": "free_delivery_threshold", "label": "Free delivery threshold (₹)", "default": 999 },
-    { "type": "text", "id": "free_delivery_prefix", "label": "Prefix text", "default": "Add" },
-    { "type": "text", "id": "free_delivery_suffix", "label": "Suffix text", "default": "more for free delivery!" },
-    { "type": "text", "id": "free_delivery_unlocked", "label": "Unlocked message", "default": "You've unlocked FREE delivery!" },
-    { "type": "header", "content": "Table labels" },
-    { "type": "text", "id": "col_product", "label": "Column: product", "default": "PRODUCT" },
-    { "type": "text", "id": "col_price", "label": "Column: price", "default": "PRICE" },
-    { "type": "text", "id": "col_qty", "label": "Column: quantity", "default": "QUANTITY" },
-    { "type": "text", "id": "col_subtotal", "label": "Column: subtotal", "default": "SUBTOTAL" },
-    { "type": "text", "id": "remove_text", "label": "Remove link text", "default": "Remove" },
-    { "type": "header", "content": "Order summary" },
-    { "type": "text", "id": "summary_title", "label": "Summary title", "default": "ORDER SUMMARY" },
-    { "type": "checkbox", "id": "show_discount_field", "label": "Show discount code field", "default": true },
-    { "type": "text", "id": "coupon_placeholder", "label": "Coupon input placeholder", "default": "Enter coupon code" },
-    { "type": "text", "id": "apply_text", "label": "Apply button text", "default": "APPLY" },
-    { "type": "text", "id": "coupon_hint", "label": "Coupon hint text", "default": "Discount codes are applied at checkout." },
-    { "type": "text", "id": "subtotal_label", "label": "Subtotal label", "default": "Subtotal" },
-    { "type": "text", "id": "discount_label", "label": "Discount label", "default": "Discount" },
-    { "type": "text", "id": "delivery_label", "label": "Delivery label", "default": "Delivery Charges" },
-    { "type": "text", "id": "delivery_value", "label": "Delivery value", "default": "FREE" },
-    { "type": "text", "id": "total_label", "label": "Total label", "default": "TOTAL PAYABLE" },
-    { "type": "text", "id": "checkout_text", "label": "Checkout button text", "default": "PROCEED TO CHECKOUT" },
-    { "type": "checkbox", "id": "show_payment_row", "label": "Show payment icons row", "default": true },
-    { "type": "text", "id": "payment_methods", "label": "Payment methods (comma separated)", "default": "UPI, Visa, MC, NetBanking, COD" },
-    { "type": "checkbox", "id": "show_recommendations", "label": "Show \"You may also like\"", "default": true },
-    { "type": "header", "content": "Empty cart" },
-    { "type": "text", "id": "empty_title", "label": "Empty title", "default": "Your cart is empty" },
-    { "type": "textarea", "id": "empty_sub", "label": "Empty subtext", "default": "Looks like you haven't added anything yet. Explore our handcrafted blouse collection!" },
-    { "type": "text", "id": "empty_cta_text", "label": "Empty CTA button text", "default": "SHOP NOW" }
-  ],
-  "blocks": [
-    {
-      "type": "trust_line",
-      "name": "Trust Line",
-      "settings": [
-        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🔒" },
-        { "type": "text", "id": "label", "label": "Label", "default": "100% Secure Checkout" }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Vamas Cart",
-      "blocks": [
-        { "type": "trust_line", "settings": { "icon": "🔒", "label": "100% Secure Checkout" } },
-        { "type": "trust_line", "settings": { "icon": "↺", "label": "7-Day Easy Returns" } },
-        { "type": "trust_line", "settings": { "icon": "📦", "label": "Ships in 2-3 Business Days" } },
-        { "type": "trust_line", "settings": { "icon": "🧵", "label": "Handcrafted & Authentic" } }
-      ]
-    }
-  ]
+  "name": "Cart Page",
+  "settings": []
 }
 {% endschema %}
