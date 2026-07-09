@@ -1,0 +1,35 @@
+{{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
+
+{% comment %}
+  Rendered two ways:
+  1. Server-side inside templates/product.json (Shopify passes `recommendations` only
+     when this section is fetched via ?section_id=, so on a normal page load
+     `recommendations.performed` is false and nothing prints here).
+  2. Client-side: assets/theme.js fetches
+     {{ routes.product_recommendations_url }}?section_id=vamas-related-products&product_id=X
+     and injects the returned HTML into #vamas-related-products (see vamas-product.liquid).
+{% endcomment %}
+
+{% if recommendations.performed and recommendations.products_count > 0 %}
+<section class="vamas-related-section">
+  <div class="vamas-related-eyebrow">{{ section.settings.eyebrow | default: 'YOU MAY ALSO LIKE' }}</div>
+  <h2 class="vamas-related-heading">{{ section.settings.heading | default: 'More Handcrafted Beauties' }}</h2>
+  <div class="vamas-related-grid">
+    {% for product in recommendations.products limit: section.settings.products_to_show %}
+      {% render 'vamas-product-card', product: product %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Vamas Related Products",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "YOU MAY ALSO LIKE" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "More Handcrafted Beauties" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 }
+  ],
+  "presets": [{ "name": "Vamas Related Products" }]
+}
+{% endschema %}

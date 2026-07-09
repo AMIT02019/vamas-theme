@@ -1,0 +1,89 @@
+{% comment %} ── Instagram Reels ("As Seen on Instagram") ── {% endcomment %}
+<section class="vamas-section vamas-reels">
+  <div class="vamas-section__header">
+    <div>
+      <h2 class="vamas-section__title">{{ section.settings.heading }}</h2>
+      <p class="vamas-section__subtitle">{{ section.settings.subtext }}</p>
+    </div>
+    <a href="{{ section.settings.instagram_url | default: '#' }}" class="vamas-view-all vamas-reels__follow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      {{ section.settings.follow_text | default: 'FOLLOW US' }}
+    </a>
+  </div>
+
+  <div class="vamas-reels__grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'reel' %}
+        <a href="{{ block.settings.link | default: '#' }}" class="vamas-reel-tile" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <img src="{{ block.settings.image | img_url: '400x711', crop: 'center' }}"
+                 class="vamas-reel-tile__img" alt="{{ block.settings.image.alt | escape | default: 'Vamas Instagram post' }}"
+                 loading="lazy" width="400" height="711">
+          {% else %}
+            {{ 'lifestyle-3' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+          <div class="vamas-reel-tile__overlay"></div>
+          <div class="vamas-reel-tile__ig-badge">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white" stroke="none"/></svg>
+          </div>
+          <div class="vamas-reel-tile__play">
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
+          <div class="vamas-reel-tile__info">
+            <div class="vamas-reel-tile__handle">{{ block.settings.handle | default: '@vamas.official' }}</div>
+            <div class="vamas-reel-tile__stats">
+              <div class="vamas-reel-tile__stat">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {{ block.settings.likes }}
+              </div>
+              <div class="vamas-reel-tile__stat">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                {{ block.settings.comments }}
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vamas Reels",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "As Seen on Instagram" },
+    { "type": "text", "id": "subtext", "label": "Subtext", "default": "Follow @vamas.official for daily style inspiration" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "text", "id": "follow_text", "label": "Follow Button Text", "default": "FOLLOW US" }
+  ],
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Reel",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Post Image" },
+        { "type": "text", "id": "handle", "label": "Instagram Handle", "default": "@vamas.official" },
+        { "type": "text", "id": "likes", "label": "Likes", "default": "1.2k" },
+        { "type": "text", "id": "comments", "label": "Comments", "default": "45" },
+        { "type": "url", "id": "link", "label": "Instagram Post URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Reels",
+      "blocks": [
+        { "type": "reel", "settings": { "handle": "@vamas.official", "likes": "2.1k", "comments": "2,072" } },
+        { "type": "reel", "settings": { "handle": "@vamas.official", "likes": "953", "comments": "953" } },
+        { "type": "reel", "settings": { "handle": "@vamas.official", "likes": "1.2k", "comments": "1,215" } },
+        { "type": "reel", "settings": { "handle": "@vamas.official", "likes": "1.4k", "comments": "1,439" } },
+        { "type": "reel", "settings": { "handle": "@vamas.official", "likes": "26.6k", "comments": "26.6k" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

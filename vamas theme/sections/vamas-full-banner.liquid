@@ -1,0 +1,57 @@
+{% comment %} ── Full Look Banner ─────────────────── {% endcomment %}
+<div class="vamas-full-banner">
+  {% if section.settings.banner_image != blank %}
+    <img src="{{ section.settings.banner_image | img_url: '1600x560', crop: 'center' }}"
+         alt="{{ section.settings.banner_image.alt | escape | default: section.settings.heading | strip_html }}"
+         loading="lazy" width="1600" height="560">
+  {% else %}
+    {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+  {% endif %}
+
+  {% if section.settings.heading != blank or section.settings.subtext != blank %}
+    <div class="vamas-full-banner__overlay">
+      <div class="vamas-full-banner__text">
+        {% if section.settings.eyebrow != blank %}
+          <p class="vamas-full-banner__tag">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="vamas-full-banner__title">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.subtext != blank %}
+          <p class="vamas-full-banner__sub">{{ section.settings.subtext }}</p>
+        {% endif %}
+        {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_url | default: '/collections/all' }}" class="vamas-full-banner__btn">
+            {{ section.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Vamas Full Banner",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "banner_image", "label": "Banner Image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow Text", "default": "THE FULL LOOK" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "info": "Use <em>text</em> to highlight a word in gold.", "default": "Complete Your <em>Signature</em> Look" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "From blouse to drape - discover fully styled ensembles curated for the modern Indian bride." },
+    { "type": "text", "id": "button_text", "label": "Button Text", "default": "SHOP THE LOOK" },
+    { "type": "url", "id": "button_url", "label": "Button URL" }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Full Banner",
+      "settings": {
+        "eyebrow": "THE FULL LOOK",
+        "heading": "Complete Your <em>Signature</em> Look",
+        "subtext": "From blouse to drape - discover fully styled ensembles curated for the modern Indian bride.",
+        "button_text": "SHOP THE LOOK"
+      }
+    }
+  ]
+}
+{% endschema %}

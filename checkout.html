@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - VAMAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--m:#420001;--ml:#6a0002;--g:#e7d1a6;--gd:#c9a96e;--bg:#fff9f2;}
+    body{font-family:'Poppins',sans-serif;background:var(--bg);color:#333;min-height:100vh;}
+
+    /* ── CHECKOUT HEADER ── */
+    .co-header{background:#fff;border-bottom:1px solid rgba(66,0,1,.08);padding:14px 60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+    .co-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .co-logo img{height:38px;width:auto;object-fit:contain;}
+    .co-secure{display:flex;align-items:center;gap:6px;font-size:11px;color:#2e7d32;font-weight:600;}
+    .co-secure svg{flex-shrink:0;}
+
+    /* ── STEPS ── */
+    .steps-bar{background:#fff;border-bottom:1px solid rgba(66,0,1,.06);padding:14px 60px;}
+    .steps{display:flex;align-items:center;gap:0;max-width:520px;margin:0 auto;}
+    .step{display:flex;align-items:center;gap:8px;flex:1;position:relative;}
+    .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;transition:all .3s;}
+    .step-num.active{background:var(--m);color:var(--g);}
+    .step-num.done{background:#2e7d32;color:#fff;}
+    .step-num.inactive{background:#eee;color:#aaa;}
+    .step-label{font-size:11px;font-weight:600;transition:color .3s;}
+    .step-label.active{color:var(--m);}
+    .step-label.done{color:#2e7d32);}
+    .step-label.inactive{color:#bbb;}
+    .step-line{flex:1;height:2px;background:#eee;margin:0 10px;border-radius:1px;overflow:hidden;}
+    .step-line-fill{height:100%;background:var(--m);width:0;transition:width .5s;}
+    .step-line-fill.done{width:100%;}
+
+    /* ── MAIN LAYOUT ── */
+    .co-body{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 120px);}
+    .co-form-col{padding:36px 60px 80px 60px;border-right:1px solid rgba(66,0,1,.07);}
+    .co-summary-col{padding:28px 36px 80px;background:#fff;position:sticky;top:0;height:100vh;overflow-y:auto;}
+
+    /* ── SECTION HEADINGS ── */
+    .sec-title{font-size:13px;font-weight:800;color:var(--m);letter-spacing:1.5px;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+    .sec-num{width:22px;height:22px;border-radius:50%;background:var(--m);color:var(--g);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+    /* ── FORM STEPS ── */
+    .form-step{display:none;}
+    .form-step.active{display:block;}
+
+    /* ── INPUT FIELDS ── */
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+    .field-row.full{grid-template-columns:1fr;}
+    .field{display:flex;flex-direction:column;gap:5px;}
+    .field label{font-size:10px;font-weight:700;letter-spacing:1px;color:#777;}
+    .field input,.field select,.field textarea{
+      border:1.5px solid #e0e0e0;border-radius:8px;padding:11px 14px;font-size:13px;font-family:'Poppins',sans-serif;
+      outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:#333;width:100%;
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--m);box-shadow:0 0 0 3px rgba(66,0,1,.07);}
+    .field input.err,.field select.err{border-color:#e53935;background:#fff8f8;}
+    .field .err-msg{font-size:10px;color:#e53935;display:none;}
+    .field input.err + .err-msg,.field select.err + .err-msg{display:block;}
+    .field textarea{resize:vertical;min-height:72px;}
+
+    /* ── PAYMENT METHODS ── */
+    .pay-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+    .pay-method{border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .2s;background:#fff;}
+    .pay-method:hover{border-color:var(--gd);background:#fffdf8;}
+    .pay-method.selected{border-color:var(--m);background:rgba(66,0,1,.04);box-shadow:0 0 0 3px rgba(66,0,1,.08);}
+    .pay-method-icon{font-size:22px;margin-bottom:5px;}
+    .pay-method-label{font-size:10px;font-weight:700;color:#555;letter-spacing:.5px;}
+    .pay-method.selected .pay-method-label{color:var(--m);}
+
+    .pay-panel{display:none;background:#fafafa;border:1px solid rgba(66,0,1,.08);border-radius:10px;padding:18px;margin-bottom:16px;animation:fadeSlide .2s ease;}
+    .pay-panel.active{display:block;}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* UPI panel */
+    .upi-row{display:flex;gap:10px;align-items:flex-start;}
+    .upi-qr{width:100px;height:100px;background:#fff;border:1px solid #ddd;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;padding:6px;}
+    .upi-qr-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;width:80px;}
+    .upi-qr-grid div{background:var(--m);border-radius:1px;}
+    .upi-note{font-size:11px;color:#666;line-height:1.6;margin-bottom:10px;}
+    .upi-id-input{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Poppins',sans-serif;outline:none;}
+    .upi-id-input:focus{border-color:var(--m);}
+
+    /* Card panel */
+    .card-visual{background:linear-gradient(135deg,var(--m),var(--ml));border-radius:14px;padding:20px 22px;margin-bottom:16px;position:relative;overflow:hidden;}
+    .card-visual::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06);}
+    .card-visual::after{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04);}
+    .card-chip{width:32px;height:24px;background:#e7d1a6;border-radius:4px;margin-bottom:16px;position:relative;z-index:1;}
+    .card-num{font-size:16px;font-weight:700;color:#fff;letter-spacing:3px;margin-bottom:14px;font-family:monospace;position:relative;z-index:1;}
+    .card-meta{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;}
+    .card-meta-label{font-size:9px;color:rgba(231,209,166,.6);letter-spacing:1px;margin-bottom:2px;}
+    .card-meta-val{font-size:12px;font-weight:700;color:rgba(231,209,166,.9);}
+    .card-network{font-size:22px;font-weight:800;color:rgba(231,209,166,.7);}
+
+    /* COD panel */
+    .cod-info{display:flex;align-items:flex-start;gap:12px;}
+    .cod-icon{font-size:28px;flex-shrink:0;}
+    .cod-text{font-size:12px;color:#555;line-height:1.7;}
+    .cod-charge{display:inline-block;background:#fff3e0;color:#e65100;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
+
+    /* Net banking panel */
+    .banks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .bank-card{border:1.5px solid #eee;border-radius:8px;padding:10px 8px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;color:#555;transition:all .2s;}
+    .bank-card:hover{border-color:var(--gd);color:var(--m);}
+    .bank-card.selected{border-color:var(--m);background:rgba(66,0,1,.04);color:var(--m);}
+    .bank-icon{font-size:18px;margin-bottom:4px;}
+
+    /* ── COUPON (in checkout) ── */
+    .co-coupon-row{display:flex;gap:8px;margin-bottom:10px;}
+    .co-coupon-input{flex:1;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:12px;font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s;}
+    .co-coupon-input:focus{border-color:var(--m);}
+    .co-coupon-btn{background:var(--m);color:var(--g);border:none;border-radius:8px;padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;}
+    .co-coupon-btn:hover{background:var(--ml);}
+    .co-coupon-msg{font-size:11px;padding:6px 10px;border-radius:5px;margin-bottom:8px;display:none;}
+    .co-coupon-msg.ok{background:#e8f5e9;color:#2e7d32;display:block;}
+    .co-coupon-msg.err{background:#ffebee;color:#c62828;display:block;}
+
+    /* ── BUTTONS ── */
+    .btn-primary{width:100%;height:52px;background:var(--m);color:var(--g);font-size:14px;font-weight:800;letter-spacing:2px;font-family:'Poppins',sans-serif;border:none;border-radius:10px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;}
+    .btn-primary:hover{background:var(--ml);}
+    .btn-secondary{background:none;border:1.5px solid rgba(66,0,1,.2);color:var(--m);font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;padding:10px 18px;border-radius:8px;cursor:pointer;transition:all .2s;}
+    .btn-secondary:hover{border-color:var(--m);background:rgba(66,0,1,.03);}
+
+    /* ── DIVIDER ── */
+    .sec-divider{height:1px;background:rgba(66,0,1,.07);margin:24px 0;}
+
+    /* ── ORDER SUMMARY ── */
+    .os-header{font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--m);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(66,0,1,.07);}
+    .os-items{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+    .os-item{display:flex;gap:12px;align-items:flex-start;}
+    .os-item-img{width:64px;height:76px;border-radius:7px;overflow:hidden;flex-shrink:0;border:1px solid rgba(66,0,1,.08);position:relative;}
+    .os-item-img img{width:100%;height:100%;object-fit:cover;object-position:top;}
+    .os-item-qty{position:absolute;top:-6px;right:-6px;background:var(--m);color:#fff;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+    .os-item-info{flex:1;}
+    .os-item-name{font-size:12px;font-weight:700;color:var(--m);margin-bottom:3px;line-height:1.3;}
+    .os-item-attrs{font-size:10px;color:#888;margin-bottom:4px;}
+    .os-item-price{font-size:13px;font-weight:800;color:var(--m);}
+    .os-item-old{font-size:10px;color:#bbb;text-decoration:line-through;margin-left:5px;}
+
+    .os-price-row{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:8px;}
+    .os-price-row span:last-child{font-weight:600;color:#333;}
+    .os-price-row.green span:last-child{color:#2e7d32;}
+    .os-price-divider{height:1px;background:rgba(66,0,1,.07);margin:10px 0;}
+    .os-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--m);margin-bottom:6px;}
+    .os-saving-badge{background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:5px 10px;border-radius:5px;text-align:center;margin-bottom:14px;}
+
+    /* mobile summary toggle */
+    .mob-summary-toggle{display:none;background:#fff;border:1px solid rgba(66,0,1,.1);border-radius:10px;padding:14px 16px;margin-bottom:20px;cursor:pointer;align-items:center;justify-content:space-between;}
+    .mob-summary-toggle .mst-total{font-size:15px;font-weight:800;color:var(--m);}
+    .mob-summary-wrap{display:none;}
+
+    /* ── TRUST STRIP ── */
+    .trust-strip{display:flex;gap:16px;padding:14px 0;border-top:1px solid rgba(66,0,1,.07);margin-top:12px;flex-wrap:wrap;}
+    .ts-item{display:flex;align-items:center;gap:6px;font-size:10px;color:#888;}
+    .ts-icon{color:var(--m);flex-shrink:0;}
+
+    /* ── ORDER CONFIRMED SCREEN ── */
+    .confirm-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+    .confirm-overlay.show{display:flex;}
+    .confirm-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#2e7d32,#4caf50);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275);}
+    @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .confirm-icon{font-size:44px;color:#fff;}
+    .confirm-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--m);margin-bottom:8px;}
+    .confirm-sub{font-size:14px;color:#777;margin-bottom:6px;}
+    .confirm-order{font-size:12px;background:rgba(66,0,1,.06);color:var(--m);padding:6px 14px;border-radius:20px;display:inline-block;font-weight:700;margin-bottom:6px;}
+    .confirm-delivery{font-size:12px;color:#2e7d32;font-weight:600;margin-bottom:28px;}
+    .confirm-items{background:#fff;border-radius:14px;padding:18px;max-width:420px;width:100%;box-shadow:0 4px 20px rgba(66,0,1,.08);margin-bottom:28px;text-align:left;}
+    .confirm-items-title{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;margin-bottom:12px;}
+    .confirm-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(66,0,1,.06);}
+    .confirm-item:last-child{border-bottom:none;}
+    .confirm-item img{width:44px;height:52px;border-radius:5px;object-fit:cover;object-position:top;}
+    .confirm-item-name{font-size:12px;font-weight:700;color:var(--m);}
+    .confirm-item-sub{font-size:10px;color:#888;}
+    .confirm-item-price{font-size:13px;font-weight:800;color:var(--m);margin-left:auto;}
+    .confirm-btns{display:flex;gap:12px;max-width:420px;width:100%;}
+    .confirm-btn-track{flex:1;background:var(--m);color:var(--g);border:none;border-radius:9px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;letter-spacing:.5px;}
+    .confirm-btn-shop{flex:1;background:transparent;border:2px solid var(--m);color:var(--m);border-radius:9px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;letter-spacing:.5px;}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .co-header{padding:12px 16px;}
+      .co-logo img{height:30px;}
+      .steps-bar{padding:10px 16px;}
+      .step-label{display:none;}
+      .co-body{grid-template-columns:1fr;min-height:auto;}
+      .co-form-col{padding:20px 16px 60px;border-right:none;}
+      .co-summary-col{display:none;} /* hidden on mobile, shown via toggle */
+      .mob-summary-toggle{display:flex;}
+      .mob-summary-wrap.open{display:block;}
+      .pay-methods{grid-template-columns:repeat(2,1fr);}
+      .field-row{grid-template-columns:1fr;}
+      .banks-grid{grid-template-columns:repeat(2,1fr);}
+      .confirm-btns{flex-direction:column;}
+    }
+    @media(min-width:769px)and(max-width:1100px){
+      .co-header,.steps-bar{padding-left:28px;padding-right:28px;}
+      .co-form-col{padding:28px 28px 60px;}
+      .co-body{grid-template-columns:1fr 340px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- CHECKOUT HEADER -->
+<div class="co-header">
+  <a href="index.html" class="co-logo">
+    <img src="assets/vamas-logo.avif" alt="VAMAS" onerror="this.style.display='none'">
+  </a>
+  <div class="co-secure">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Secure Checkout
+  </div>
+</div>
+
+<!-- STEPS BAR -->
+<div class="steps-bar">
+  <div class="steps">
+    <div class="step" id="step-indicator-1">
+      <div class="step-num active" id="snum-1">1</div>
+      <div class="step-label active" id="slabel-1">ADDRESS</div>
+    </div>
+    <div class="step-line"><div class="step-line-fill" id="sline-1"></div></div>
+    <div class="step" id="step-indicator-2">
+      <div class="step-num inactive" id="snum-2">2</div>
+      <div class="step-label inactive" id="slabel-2">PAYMENT</div>
+    </div>
+    <div class="step-line"><div class="step-line-fill" id="sline-2"></div></div>
+    <div class="step" id="step-indicator-3">
+      <div class="step-num inactive" id="snum-3">3</div>
+      <div class="step-label inactive" id="slabel-3">CONFIRM</div>
+    </div>
+  </div>
+</div>
+
+<div class="co-body">
+
+  <!-- LEFT: FORM -->
+  <div class="co-form-col">
+
+    <!-- MOBILE: summary toggle -->
+    <div class="mob-summary-toggle" id="mob-summary-toggle" onclick="toggleMobSummary()">
+      <div>
+        <div style="font-size:10px;color:#888;font-weight:600;letter-spacing:1px;">ORDER SUMMARY</div>
+        <div class="mst-total" id="mob-total">Rs.0</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--m);font-weight:600;">
+        Show <svg id="mob-toggle-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="mob-summary-wrap" id="mob-summary-wrap">
+      <!-- injected by JS on mobile -->
+    </div>
+
+    <!-- ═══ STEP 1: CONTACT + ADDRESS ═══ -->
+    <div class="form-step active" id="step-1">
+      <div class="sec-title"><span class="sec-num">1</span> CONTACT INFORMATION</div>
+      <div class="field-row">
+        <div class="field">
+          <label>FULL NAME *</label>
+          <input type="text" id="f-name" placeholder="Priya Sharma" autocomplete="name">
+          <span class="err-msg">Please enter your name</span>
+        </div>
+        <div class="field">
+          <label>PHONE NUMBER *</label>
+          <input type="tel" id="f-phone" placeholder="+91 98765 43210" maxlength="13" autocomplete="tel">
+          <span class="err-msg">Enter a valid phone number</span>
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field">
+          <label>EMAIL ADDRESS</label>
+          <input type="email" id="f-email" placeholder="priya@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="sec-divider"></div>
+      <div class="sec-title"><span class="sec-num">2</span> DELIVERY ADDRESS</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>PINCODE *</label>
+          <input type="text" id="f-pin" placeholder="400001" maxlength="6" oninput="autofillCity(this.value)">
+          <span class="err-msg">Enter valid 6-digit pincode</span>
+        </div>
+        <div class="field">
+          <label>STATE *</label>
+          <select id="f-state">
+            <option value="">Select State</option>
+            <option>Maharashtra</option><option>Delhi</option><option>Karnataka</option>
+            <option>Tamil Nadu</option><option>Gujarat</option><option>Rajasthan</option>
+            <option>West Bengal</option><option>Uttar Pradesh</option><option>Telangana</option>
+            <option>Kerala</option><option>Punjab</option><option>Haryana</option>
+            <option>Madhya Pradesh</option><option>Andhra Pradesh</option><option>Bihar</option>
+            <option>Other</option>
+          </select>
+          <span class="err-msg">Please select a state</span>
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field">
+          <label>FLAT / HOUSE NO., STREET *</label>
+          <input type="text" id="f-addr" placeholder="A-12, Rose Apartments, MG Road" autocomplete="address-line1">
+          <span class="err-msg">Please enter your address</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>LANDMARK (optional)</label>
+          <input type="text" id="f-landmark" placeholder="Near City Mall">
+        </div>
+        <div class="field">
+          <label>CITY / DISTRICT *</label>
+          <input type="text" id="f-city" placeholder="Mumbai" autocomplete="address-level2">
+          <span class="err-msg">Please enter city</span>
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field">
+          <label>DELIVERY NOTE (optional)</label>
+          <textarea id="f-note" placeholder="e.g. Leave with security, ring bell twice..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goToStep2()">
+        CONTINUE TO PAYMENT
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+    <!-- ═══ STEP 2: PAYMENT ═══ -->
+    <div class="form-step" id="step-2">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="sec-title" style="margin-bottom:0;"><span class="sec-num">3</span> SELECT PAYMENT METHOD</div>
+        <button class="btn-secondary" onclick="goToStep1()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+      </div>
+
+      <!-- Delivery address recap -->
+      <div id="addr-recap" style="background:rgba(66,0,1,.04);border:1px solid rgba(66,0,1,.1);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#888;letter-spacing:1px;margin-bottom:4px;">DELIVERING TO</div>
+          <div id="recap-name" style="font-size:13px;font-weight:700;color:var(--m);"></div>
+          <div id="recap-addr" style="font-size:11px;color:#666;margin-top:2px;line-height:1.5;"></div>
+        </div>
+        <button class="btn-secondary" onclick="goToStep1()" style="padding:6px 12px;font-size:10px;white-space:nowrap;flex-shrink:0;">Change</button>
+      </div>
+
+      <div class="pay-methods">
+        <div class="pay-method selected" id="pm-upi" onclick="selectPayment('upi')">
+          <div class="pay-method-icon">&#128242;</div>
+          <div class="pay-method-label">UPI</div>
+        </div>
+        <div class="pay-method" id="pm-card" onclick="selectPayment('card')">
+          <div class="pay-method-icon">&#128179;</div>
+          <div class="pay-method-label">CARD</div>
+        </div>
+        <div class="pay-method" id="pm-cod" onclick="selectPayment('cod')">
+          <div class="pay-method-icon">&#128176;</div>
+          <div class="pay-method-label">CASH</div>
+        </div>
+        <div class="pay-method" id="pm-nb" onclick="selectPayment('nb')">
+          <div class="pay-method-icon">&#127968;</div>
+          <div class="pay-method-label">NET BANKING</div>
+        </div>
+      </div>
+
+      <!-- UPI panel -->
+      <div class="pay-panel active" id="panel-upi">
+        <div class="upi-row">
+          <div class="upi-qr">
+            <svg viewBox="0 0 37 37" width="76" height="76" fill="var(--m)" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="10" height="10" rx="1"/><rect x="4" y="4" width="4" height="4" fill="var(--bg)"/>
+              <rect x="26" y="1" width="10" height="10" rx="1"/><rect x="29" y="4" width="4" height="4" fill="var(--bg)"/>
+              <rect x="1" y="26" width="10" height="10" rx="1"/><rect x="4" y="29" width="4" height="4" fill="var(--bg)"/>
+              <rect x="14" y="1" width="2" height="2"/><rect x="17" y="1" width="2" height="2"/><rect x="20" y="3" width="2" height="2"/>
+              <rect x="14" y="5" width="2" height="4"/><rect x="18" y="5" width="4" height="2"/><rect x="20" y="8" width="2" height="4"/>
+              <rect x="14" y="14" width="4" height="2"/><rect x="20" y="14" width="4" height="2"/><rect x="26" y="14" width="4" height="2"/>
+              <rect x="14" y="18" width="2" height="6"/><rect x="18" y="20" width="4" height="2"/><rect x="24" y="18" width="2" height="4"/>
+              <rect x="28" y="18" width="4" height="4"/><rect x="18" y="26" width="2" height="4"/><rect x="22" y="28" width="4" height="2"/>
+              <rect x="28" y="24" width="4" height="8" rx="1"/><rect x="22" y="32" width="6" height="2"/>
+            </svg>
+            <div style="font-size:8px;color:#888;margin-top:3px;font-weight:600;">SCAN &amp; PAY</div>
+          </div>
+          <div style="flex:1;">
+            <div class="upi-note"><strong>Scan QR</strong> with any UPI app<br>OR enter your UPI ID below:</div>
+            <input class="upi-id-input" id="upi-id" type="text" placeholder="yourname@upi / 9876543210@paytm">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Crect width='60' height='24' rx='4' fill='%23f5f5f5'/%3E%3Ctext x='30' y='16' font-size='8' fill='%23555' text-anchor='middle' font-family='sans-serif' font-weight='700'%3EPhonePe%3C/text%3E%3C/svg%3E" alt="PhonePe" style="height:24px;">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Crect width='60' height='24' rx='4' fill='%23f5f5f5'/%3E%3Ctext x='30' y='16' font-size='8' fill='%23555' text-anchor='middle' font-family='sans-serif' font-weight='700'%3EGoogle Pay%3C/text%3E%3C/svg%3E" alt="GPay" style="height:24px;">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Crect width='60' height='24' rx='4' fill='%23f5f5f5'/%3E%3Ctext x='30' y='16' font-size='8' fill='%23555' text-anchor='middle' font-family='sans-serif' font-weight='700'%3EPaytm%3C/text%3E%3C/svg%3E" alt="Paytm" style="height:24px;">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Crect width='60' height='24' rx='4' fill='%23f5f5f5'/%3E%3Ctext x='30' y='16' font-size='8' fill='%23555' text-anchor='middle' font-family='sans-serif' font-weight='700'%3EBHIM UPI%3C/text%3E%3C/svg%3E" alt="BHIM" style="height:24px;">
+        </div>
+      </div>
+
+      <!-- CARD panel -->
+      <div class="pay-panel" id="panel-card">
+        <div class="card-visual">
+          <div class="card-chip"></div>
+          <div class="card-num" id="card-display">•••• •••• •••• ••••</div>
+          <div class="card-meta">
+            <div><div class="card-meta-label">CARD HOLDER</div><div class="card-meta-val" id="card-name-display">YOUR NAME</div></div>
+            <div><div class="card-meta-label">EXPIRES</div><div class="card-meta-val" id="card-exp-display">MM/YY</div></div>
+            <div class="card-network">VISA</div>
+          </div>
+        </div>
+        <div class="field-row full" style="margin-bottom:10px;">
+          <div class="field">
+            <label>CARD NUMBER</label>
+            <input type="text" id="card-num-input" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>CARD HOLDER NAME</label>
+            <input type="text" id="card-name-input" placeholder="As on card" oninput="document.getElementById('card-name-display').textContent=this.value||'YOUR NAME'">
+          </div>
+          <div class="field">
+            <label>EXPIRY / CVV</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="card-exp-input" placeholder="MM/YY" maxlength="5" style="flex:1;border:1.5px solid #e0e0e0;border-radius:8px;padding:11px 10px;font-size:13px;font-family:'Poppins',sans-serif;outline:none;" oninput="formatExp(this)">
+              <input type="password" id="card-cvv-input" placeholder="CVV" maxlength="3" style="width:70px;border:1.5px solid #e0e0e0;border-radius:8px;padding:11px 10px;font-size:13px;font-family:'Poppins',sans-serif;outline:none;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COD panel -->
+      <div class="pay-panel" id="panel-cod">
+        <div class="cod-info">
+          <div class="cod-icon">&#128176;</div>
+          <div class="cod-text">
+            Pay when your order arrives at your doorstep. Our delivery partner will collect the payment in cash.
+            <br><span class="cod-charge">&#43; Rs.40 COD handling charge</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Net Banking panel -->
+      <div class="pay-panel" id="panel-nb">
+        <div class="banks-grid">
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>SBI</div>
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>HDFC</div>
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>ICICI</div>
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>Axis</div>
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>Kotak</div>
+          <div class="bank-card" onclick="selectBank(this)"><div class="bank-icon">&#127968;</div>Other</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="placeOrder()" id="place-order-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        PLACE ORDER
+      </button>
+      <div style="text-align:center;font-size:10px;color:#aaa;margin-top:8px;">
+        By placing order you agree to our Terms &amp; Return Policy
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: ORDER SUMMARY (desktop) -->
+  <div class="co-summary-col" id="co-summary-col">
+    <div class="os-header">ORDER SUMMARY</div>
+    <div class="os-items" id="co-os-items"></div>
+
+    <div class="co-coupon-row">
+      <input class="co-coupon-input" id="co-coupon-input" type="text" placeholder="Coupon code" autocomplete="off">
+      <button class="co-coupon-btn" onclick="coApplyCoupon()">APPLY</button>
+    </div>
+    <div class="co-coupon-msg" id="co-coupon-msg"></div>
+
+    <div class="os-price-row"><span>MRP Total</span><span id="co-mrp">Rs.0</span></div>
+    <div class="os-price-row green"><span>Product Discount</span><span id="co-discount">− Rs.0</span></div>
+    <div class="os-price-row green" id="co-coupon-row" style="display:none;"><span>Coupon Discount</span><span id="co-coupon-disc"></span></div>
+    <div class="os-price-row" id="co-cod-row" style="display:none;"><span>COD Charge</span><span style="color:#e65100;font-weight:700;">+ Rs.40</span></div>
+    <div class="os-price-row"><span>Delivery</span><span id="co-delivery">FREE</span></div>
+    <div class="os-price-divider"></div>
+    <div class="os-total-row"><span>TOTAL PAYABLE</span><span id="co-total">Rs.0</span></div>
+    <div class="os-saving-badge" id="co-saving" style="display:none;">&#127881; Saving <strong id="co-saving-amt">Rs.0</strong></div>
+
+    <div class="trust-strip">
+      <div class="ts-item"><svg class="ts-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Secure</div>
+      <div class="ts-item"><svg class="ts-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>7-Day Returns</div>
+      <div class="ts-item"><svg class="ts-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Fast Delivery</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ORDER CONFIRMED SCREEN -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-circle"><span class="confirm-icon">&#10003;</span></div>
+  <div class="confirm-title">Order Placed!</div>
+  <div class="confirm-sub">Thank you for shopping with VAMAS</div>
+  <div class="confirm-order" id="confirm-order-num">Order #VM-000000</div>
+  <div class="confirm-delivery" id="confirm-delivery-date">Estimated delivery: July 14–16, 2026</div>
+  <div class="confirm-items" id="confirm-items-list"></div>
+  <div class="confirm-btns">
+    <button class="confirm-btn-track" onclick="window.location.href='index.html'">&#128666; Track Order</button>
+    <button class="confirm-btn-shop" onclick="window.location.href='collection.html'">Continue Shopping</button>
+  </div>
+</div>
+
+<script src="includes.js"></script>
+<script>
+(function(){
+
+  var FREE_THRESHOLD = 999;
+  var couponDiscount = 0;
+  var selectedPayment = 'upi';
+  var selectedBank    = null;
+
+  /* auto-restore coupon applied in cart */
+  (function(){
+    var saved = window.VamasCoupon.get();
+    if(saved){
+      couponDiscount = saved.pct;
+      var msg = document.getElementById('co-coupon-msg');
+      msg.className = 'co-coupon-msg ok';
+      msg.textContent = '&#10003; '+saved.code+' applied — '+saved.pct+'% off';
+    }
+  })();
+
+  function fmt(n){ return 'Rs.' + n.toLocaleString('en-IN'); }
+  function priceParse(p){ return typeof p==='number' ? p : parseInt(String(p).replace(/[^\d]/g,''))||0; }
+  function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* ── Load items (Buy Now or Cart) ── */
+  function loadOrderItems(){
+    var isBuyNow = window.location.search.indexOf('buynow=1') > -1;
+    if(isBuyNow){
+      try{
+        var item = JSON.parse(sessionStorage.getItem('vamas_buynow'));
+        return item ? [item] : [];
+      }catch(e){ return []; }
+    }
+    return window.VamasCart ? window.VamasCart.get() : [];
+  }
+
+  /* ── Render summary ── */
+  function renderSummary(){
+    var items = loadOrderItems();
+    var osItems = document.getElementById('co-os-items');
+    osItems.innerHTML = '';
+
+    items.forEach(function(item){
+      var price = priceParse(item.price);
+      var el = document.createElement('div');
+      el.className = 'os-item';
+      el.innerHTML =
+        '<div class="os-item-img">'
+        + '<img src="'+escH(item.img||'assets/slide-pink.jpg')+'" alt="'+escH(item.name||'')+'" onerror="this.src=\'assets/slide-pink.jpg\'">'
+        + '<span class="os-item-qty">'+item.qty+'</span>'
+        + '</div>'
+        + '<div class="os-item-info">'
+        + '<div class="os-item-name">'+escH(item.name||'Blouse')+'</div>'
+        + '<div class="os-item-attrs">'
+        + (item.color && item.color!=='Default' ? item.color+' &nbsp;·&nbsp; ' : '')
+        + (item.size ? 'Size '+item.size : '')
+        + '</div>'
+        + '<div>'
+        + '<span class="os-item-price">'+fmt(price*item.qty)+'</span>'
+        + (priceParse(item.origPrice)>price ? '<span class="os-item-old">'+fmt(priceParse(item.origPrice)*item.qty)+'</span>' : '')
+        + '</div>'
+        + '</div>';
+      osItems.appendChild(el);
+    });
+
+    refreshTotals(items);
+    renderMobSummary(items);
+  }
+
+  function refreshTotals(items){
+    var subtotal  = items.reduce(function(s,i){ return s+priceParse(i.price)*i.qty; },0);
+    var mrp       = items.reduce(function(s,i){ return s+priceParse(i.origPrice||i.price)*i.qty; },0);
+    var discount  = mrp - subtotal;
+    var couponAmt = couponDiscount > 0 ? Math.round(subtotal*couponDiscount/100) : 0;
+    var codCharge = selectedPayment==='cod' ? 40 : 0;
+    var delivery  = (subtotal-couponAmt) >= FREE_THRESHOLD ? 0 : 79;
+    var total     = subtotal - couponAmt + delivery + codCharge;
+    var totalSave = discount + couponAmt + (delivery===0 ? 79 : 0);
+
+    document.getElementById('co-mrp').textContent         = fmt(mrp);
+    document.getElementById('co-discount').textContent    = '− '+fmt(discount);
+    document.getElementById('co-total').textContent       = fmt(total);
+    document.getElementById('mob-total').textContent      = fmt(total);
+
+    var delEl = document.getElementById('co-delivery');
+    if(delivery===0){ delEl.textContent='FREE'; delEl.style.color='#2e7d32'; }
+    else             { delEl.textContent=fmt(delivery); delEl.style.color='#333'; }
+
+    document.getElementById('co-coupon-row').style.display = couponAmt>0 ? 'flex' : 'none';
+    if(couponAmt>0) document.getElementById('co-coupon-disc').textContent = '− '+fmt(couponAmt);
+
+    document.getElementById('co-cod-row').style.display = selectedPayment==='cod' ? 'flex' : 'none';
+    document.getElementById('co-saving').style.display  = totalSave>0 ? 'block' : 'none';
+    if(totalSave>0) document.getElementById('co-saving-amt').textContent = fmt(totalSave);
+  }
+
+  /* ── Mobile summary ── */
+  function renderMobSummary(items){
+    var wrap = document.getElementById('mob-summary-wrap');
+    var col  = document.getElementById('co-summary-col');
+    if(window.innerWidth > 768) return;
+    wrap.innerHTML = col.innerHTML;
+  }
+  function toggleMobSummary(){
+    var wrap = document.getElementById('mob-summary-wrap');
+    var arrow= document.getElementById('mob-toggle-arrow');
+    wrap.classList.toggle('open');
+    arrow.style.transform = wrap.classList.contains('open') ? 'rotate(180deg)' : '';
+    document.querySelector('#mob-summary-toggle div:first-child div:first-child').textContent =
+      wrap.classList.contains('open') ? 'Hide summary' : 'Show summary';
+  }
+  window.toggleMobSummary = toggleMobSummary;
+
+  /* ── Step navigation ── */
+  function setStep(n){
+    document.getElementById('step-1').classList.toggle('active', n===1);
+    document.getElementById('step-2').classList.toggle('active', n===2);
+    /* step indicators */
+    for(var i=1;i<=3;i++){
+      var num   = document.getElementById('snum-'+i);
+      var label = document.getElementById('slabel-'+i);
+      var line  = document.getElementById('sline-'+(i<3?i:'2'));
+      if(i < n){
+        num.className='step-num done'; num.textContent='✓';
+        label.className='step-label done';
+        if(i<=2 && document.getElementById('sline-'+i)) document.getElementById('sline-'+i).classList.add('done');
+      } else if(i===n){
+        num.className='step-num active';
+        label.className='step-label active';
+      } else {
+        num.className='step-num inactive';
+        label.className='step-label inactive';
+      }
+    }
+    window.scrollTo(0,0);
+  }
+
+  function validateStep1(){
+    var ok = true;
+    function check(id, test){
+      var el = document.getElementById(id);
+      var valid = test(el.value.trim());
+      el.classList.toggle('err', !valid);
+      if(!valid) ok=false;
+      return valid;
+    }
+    check('f-name',  function(v){ return v.length > 1; });
+    check('f-phone', function(v){ return /^\+?[\d\s]{10,13}$/.test(v); });
+    check('f-pin',   function(v){ return /^\d{6}$/.test(v); });
+    check('f-state', function(v){ return v !== ''; });
+    check('f-addr',  function(v){ return v.length > 5; });
+    check('f-city',  function(v){ return v.length > 1; });
+    return ok;
+  }
+
+  window.goToStep2 = function(){
+    if(!validateStep1()) return;
+    var name  = document.getElementById('f-name').value.trim();
+    var phone = document.getElementById('f-phone').value.trim();
+    var addr  = document.getElementById('f-addr').value.trim();
+    var city  = document.getElementById('f-city').value.trim();
+    var pin   = document.getElementById('f-pin').value.trim();
+    var state = document.getElementById('f-state').value;
+    document.getElementById('recap-name').textContent = name + '  ' + phone;
+    document.getElementById('recap-addr').textContent = addr + ', ' + city + ', ' + state + ' - ' + pin;
+    setStep(2);
+  };
+
+  window.goToStep1 = function(){ setStep(1); };
+
+  /* ── Payment selection ── */
+  window.selectPayment = function(type){
+    selectedPayment = type;
+    ['upi','card','cod','nb'].forEach(function(t){
+      document.getElementById('pm-'+t).classList.toggle('selected', t===type);
+      document.getElementById('panel-'+t).classList.toggle('active', t===type);
+    });
+    refreshTotals(loadOrderItems());
+  };
+
+  window.selectBank = function(el){
+    document.querySelectorAll('.bank-card').forEach(function(b){ b.classList.remove('selected'); });
+    el.classList.add('selected');
+    selectedBank = el.textContent.trim();
+  };
+
+  /* ── Coupon in checkout (uses shared VamasCoupon) ── */
+  window.coApplyCoupon = function(){
+    var code = document.getElementById('co-coupon-input').value.trim().toUpperCase();
+    var msg  = document.getElementById('co-coupon-msg');
+    if(!code){ msg.className='co-coupon-msg err'; msg.textContent='Please enter a coupon code.'; return; }
+    var items    = loadOrderItems();
+    var subtotal = items.reduce(function(s,i){ return s+(typeof i.price==='number'?i.price:parseInt(String(i.price).replace(/[^\d]/g,''))||0)*i.qty; },0);
+    var result   = window.VamasCoupon.apply(code, subtotal);
+    if(result.ok){
+      couponDiscount = result.pct;
+      msg.className='co-coupon-msg ok';
+      msg.textContent='&#10003; '+code+' applied — '+result.pct+'% off!';
+      document.getElementById('co-coupon-input').value = '';
+    } else {
+      couponDiscount = 0;
+      msg.className='co-coupon-msg err';
+      msg.textContent='&#10007; '+result.msg;
+    }
+    refreshTotals(loadOrderItems());
+  };
+  document.getElementById('co-coupon-input').addEventListener('keydown',function(e){ if(e.key==='Enter') coApplyCoupon(); });
+
+  /* ── Card input formatting ── */
+  window.formatCard = function(inp){
+    var v = inp.value.replace(/\D/g,'').slice(0,16);
+    inp.value = v.replace(/(.{4})/g,'$1 ').trim();
+    document.getElementById('card-display').textContent = (v.padEnd(16,'•')).replace(/(.{4})/g,'$1 ').trim().replace(/[0-9]/g,'•').slice(0,v.length)+v.slice(-Math.max(0,v.length-0));
+    /* show last 4 digits on card visual */
+    document.getElementById('card-display').textContent = (v.length?v:' ').replace(/(.{4})/g, function(m){ return (parseInt(m)||0) ? '•••• ' : '•••• '; }).trim()+' '+v.slice(-4);
+    if(v.length <= 12) document.getElementById('card-display').textContent = '•••• •••• •••• ••••';
+    else document.getElementById('card-display').textContent = '•••• •••• •••• '+v.slice(12);
+  };
+  window.formatExp = function(inp){
+    var v = inp.value.replace(/\D/g,'');
+    if(v.length >= 2) v = v.slice(0,2)+'/'+v.slice(2,4);
+    inp.value = v;
+    document.getElementById('card-exp-display').textContent = v||'MM/YY';
+  };
+
+  /* ── Pincode autofill ── */
+  var pincodeMap = {'400':'Maharashtra','110':'Delhi','560':'Karnataka','600':'Tamil Nadu','380':'Gujarat','302':'Rajasthan','700':'West Bengal','226':'Uttar Pradesh','500':'Telangana','682':'Kerala','160':'Punjab','122':'Haryana'};
+  window.autofillCity = function(val){
+    if(val.length === 6){
+      var pre = val.slice(0,3);
+      var state = pincodeMap[pre];
+      if(state && !document.getElementById('f-state').value){
+        document.getElementById('f-state').value = state;
+      }
+    }
+  };
+
+  /* ── Place Order ── */
+  window.placeOrder = function(){
+    var btn = document.getElementById('place-order-btn');
+    btn.textContent = 'PROCESSING...';
+    btn.disabled = true;
+
+    setTimeout(function(){
+      var items = loadOrderItems();
+      var orderId = 'VM-' + String(Math.floor(100000+Math.random()*900000));
+      var today = new Date();
+      var del1 = new Date(today); del1.setDate(del1.getDate()+5);
+      var del2 = new Date(today); del2.setDate(del2.getDate()+7);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var delStr = del1.getDate()+' '+months[del1.getMonth()]+' – '+del2.getDate()+' '+months[del2.getMonth()]+' '+del2.getFullYear();
+
+      document.getElementById('confirm-order-num').textContent = 'Order #'+orderId;
+      document.getElementById('confirm-delivery-date').textContent = 'Estimated delivery: '+delStr;
+
+      var cl = document.getElementById('confirm-items-list');
+      cl.innerHTML = '<div class="confirm-items-title">ITEMS ORDERED</div>';
+      items.forEach(function(item){
+        var el = document.createElement('div');
+        el.className = 'confirm-item';
+        el.innerHTML =
+          '<img src="'+escH(item.img||'assets/slide-pink.jpg')+'" onerror="this.src=\'assets/slide-pink.jpg\'">'
+          +'<div><div class="confirm-item-name">'+escH(item.name||'Blouse')+'</div>'
+          +'<div class="confirm-item-sub">'+(item.color&&item.color!=='Default'?item.color+' · ':'')+' Size '+escH(item.size||'—')+' × '+item.qty+'</div></div>'
+          +'<div class="confirm-item-price">'+fmt(priceParse(item.price)*item.qty)+'</div>';
+        cl.appendChild(el);
+      });
+
+      /* Save order to VamasOrders for admin dashboard */
+      var subtotal  = items.reduce(function(s,i){ return s+priceParse(i.price)*i.qty; },0);
+      var mrp       = items.reduce(function(s,i){ return s+priceParse(i.origPrice||i.price)*i.qty; },0);
+      var couponAmt = couponDiscount>0 ? Math.round(subtotal*couponDiscount/100) : 0;
+      var codCharge = selectedPayment==='cod' ? 40 : 0;
+      var delivery  = (subtotal-couponAmt)>=FREE_THRESHOLD ? 0 : 79;
+      var orderTotal= subtotal - couponAmt + delivery + codCharge;
+      var appliedCoupon = window.VamasCoupon.get();
+      window.VamasOrders.save({
+        id:       orderId,
+        date:     new Date().toISOString(),
+        customer: document.getElementById('f-name').value.trim(),
+        phone:    document.getElementById('f-phone').value.trim(),
+        city:     document.getElementById('f-city').value.trim()+', '+document.getElementById('f-state').value,
+        address:  document.getElementById('f-addr').value.trim(),
+        pincode:  document.getElementById('f-pin').value.trim(),
+        items:    items,
+        subtotal: subtotal,
+        discount: mrp-subtotal,
+        coupon:   appliedCoupon ? appliedCoupon.code : null,
+        couponAmt:couponAmt,
+        delivery: delivery,
+        codCharge:codCharge,
+        total:    orderTotal,
+        payment:  selectedPayment.toUpperCase(),
+        status:   'confirmed'
+      });
+      if(appliedCoupon) window.VamasCoupon.use(appliedCoupon.code);
+      window.VamasCoupon.remove();
+
+      /* Clear cart if not buynow */
+      var isBuyNow = window.location.search.indexOf('buynow=1') > -1;
+      if(!isBuyNow && window.VamasCart){ window.VamasCart.clear(); }
+      try{ sessionStorage.removeItem('vamas_buynow'); }catch(e){}
+
+      setStep(3);
+      document.getElementById('confirm-overlay').classList.add('show');
+    }, 1400);
+  };
+
+  /* ── Init ── */
+  renderSummary();
+  setStep(1);
+
+})();
+</script>
+</body>
+</html>

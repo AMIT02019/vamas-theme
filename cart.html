@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cart - VAMAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--m:#420001;--ml:#6a0002;--g:#e7d1a6;--gd:#c9a96e;--bg:#fff9f2;}
+    body{font-family:'Poppins',sans-serif;background:var(--bg);color:#333;}
+
+    .breadcrumb{padding:14px 80px;font-size:11px;color:#888;display:flex;align-items:center;gap:6px;}
+    .breadcrumb a{color:#888;text-decoration:none;}
+    .breadcrumb a:hover{color:var(--m);}
+    .breadcrumb span{color:#aaa;}
+
+    .cart-page-header{padding:0 80px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .cart-page-title{font-size:26px;font-weight:800;color:var(--m);}
+    .cart-count-badge{background:rgba(66,0,1,.08);color:var(--m);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-left:10px;}
+    .continue-link{font-size:11px;color:var(--m);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--m);padding-bottom:1px;}
+
+    .cart-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;padding:0 80px 80px;align-items:flex-start;max-width:1400px;margin:0 auto;}
+
+    .free-del-box{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid rgba(66,0,1,.08);}
+    .fdel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .fdel-label{font-size:12px;color:#444;}
+    .fdel-label strong{color:var(--m);}
+    .fdel-track{height:5px;background:#eee;border-radius:3px;overflow:hidden;}
+    .fdel-fill{height:100%;background:linear-gradient(90deg,var(--m),#c9a96e);border-radius:3px;transition:width .5s ease;}
+    .fdel-success{font-size:12px;color:#2e7d32;font-weight:600;text-align:center;padding:10px 16px;background:#e8f5e9;border-radius:10px;margin-bottom:12px;}
+
+    .cart-items-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(66,0,1,.06);overflow:hidden;}
+    .cart-items-head{display:grid;grid-template-columns:3fr 1fr 1fr 1fr 40px;gap:12px;padding:13px 20px;background:rgba(66,0,1,.03);border-bottom:1px solid rgba(66,0,1,.07);font-size:10px;font-weight:700;letter-spacing:1.5px;color:#888;}
+    .cart-item{display:grid;grid-template-columns:3fr 1fr 1fr 1fr 40px;gap:12px;align-items:center;padding:18px 20px;border-bottom:1px solid rgba(66,0,1,.06);transition:background .2s,opacity .3s;}
+    .cart-item:last-child{border-bottom:none;}
+    .cart-item:hover{background:rgba(66,0,1,.015);}
+    .cart-item.removing{opacity:.3;pointer-events:none;}
+
+    .ci-product{display:flex;align-items:center;gap:14px;}
+    .ci-img{width:80px;height:96px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid rgba(66,0,1,.08);}
+    .ci-img img{width:100%;height:100%;object-fit:cover;object-position:top;}
+    .ci-name{font-size:13px;font-weight:700;color:var(--m);margin-bottom:4px;line-height:1.3;}
+    .ci-type{font-size:11px;color:#888;margin-bottom:5px;}
+    .ci-attrs{display:flex;gap:8px;flex-wrap:wrap;}
+    .ci-attr{font-size:10px;background:rgba(66,0,1,.06);color:#555;padding:3px 8px;border-radius:4px;font-weight:500;}
+    .ci-actions{display:flex;gap:10px;margin-top:8px;}
+    .ci-action-btn{font-size:10px;color:#aaa;background:none;border:none;cursor:pointer;font-family:'Poppins',sans-serif;padding:0;display:flex;align-items:center;gap:3px;transition:color .15s;}
+    .ci-action-btn:hover{color:var(--m);}
+
+    .ci-price{font-size:13px;font-weight:700;color:var(--m);}
+    .ci-orig{font-size:11px;color:#bbb;text-decoration:line-through;margin-top:2px;}
+    .ci-save{font-size:10px;color:#2e7d32;font-weight:600;}
+
+    .ci-qty{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;width:90px;}
+    .ci-qty-btn{width:28px;height:32px;border:none;background:#fafafa;cursor:pointer;font-size:16px;color:#555;transition:background .15s;flex-shrink:0;}
+    .ci-qty-btn:hover{background:#f0f0f0;}
+    .ci-qty-num{flex:1;text-align:center;font-size:13px;font-weight:600;}
+
+    .ci-subtotal{font-size:14px;font-weight:800;color:var(--m);text-align:right;}
+    .ci-remove{display:flex;align-items:center;justify-content:center;}
+    .ci-remove-btn{width:28px;height:28px;border-radius:50%;border:1px solid #eee;background:#fff;cursor:pointer;color:#ccc;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .ci-remove-btn:hover{background:#ffebee;border-color:#ef9a9a;color:#e53935;}
+
+    .empty-cart{text-align:center;padding:80px 24px;display:none;}
+    .empty-cart.show{display:block;}
+    .empty-icon{font-size:60px;margin-bottom:16px;}
+    .empty-title{font-size:22px;font-weight:800;color:var(--m);margin-bottom:8px;}
+    .empty-sub{font-size:13px;color:#888;margin-bottom:28px;line-height:1.7;}
+    .btn-shop{background:var(--m);color:var(--g);border:none;border-radius:8px;padding:14px 32px;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Poppins',sans-serif;text-decoration:none;display:inline-block;}
+    .btn-shop:hover{background:var(--ml);}
+
+    .undo-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:12px;font-weight:600;padding:12px 20px;border-radius:8px;display:flex;align-items:center;gap:12px;z-index:900;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;}
+    .undo-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all;}
+    .undo-btn{background:var(--g);color:var(--m);border:none;border-radius:4px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+    .order-summary{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(66,0,1,.06);padding:22px;position:sticky;top:90px;}
+    .os-title{font-size:13px;font-weight:800;letter-spacing:1.5px;color:var(--m);margin-bottom:18px;}
+    .os-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:12px;color:#555;}
+    .os-row span:last-child{font-weight:600;color:#333;}
+    .os-row.green span:last-child{color:#2e7d32;}
+    .os-divider{height:1px;background:rgba(66,0,1,.07);margin:14px 0;}
+    .os-total{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:800;color:var(--m);margin-bottom:6px;}
+    .os-saving{background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:600;padding:7px 12px;border-radius:6px;text-align:center;margin-bottom:16px;}
+
+    .coupon-form{display:flex;gap:8px;margin-bottom:8px;}
+    .coupon-input{flex:1;border:1.5px solid #e0e0e0;border-radius:7px;padding:10px 12px;font-size:12px;font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s;}
+    .coupon-input:focus{border-color:var(--m);}
+    .coupon-btn{background:var(--m);color:var(--g);border:none;border-radius:7px;padding:10px 16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;}
+    .coupon-btn:hover{background:var(--ml);}
+    .coupon-result{font-size:11px;padding:7px 10px;border-radius:5px;margin-bottom:10px;display:none;}
+    .coupon-result.ok{background:#e8f5e9;color:#2e7d32;display:block;}
+    .coupon-result.err{background:#ffebee;color:#c62828;display:block;}
+    .applied-coupon{display:none;align-items:center;justify-content:space-between;background:#e8f5e9;padding:8px 12px;border-radius:6px;margin-bottom:10px;}
+    .applied-coupon.show{display:flex;}
+    .applied-tag{font-size:11px;font-weight:700;color:#2e7d32;}
+    .remove-coupon{font-size:11px;color:#888;cursor:pointer;background:none;border:none;font-family:'Poppins',sans-serif;text-decoration:underline;}
+
+    .btn-checkout{width:100%;height:50px;background:var(--m);color:var(--g);font-size:14px;font-weight:800;letter-spacing:2px;font-family:'Poppins',sans-serif;border:none;border-radius:9px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;}
+    .btn-checkout:hover{background:var(--ml);}
+    .btn-continue{width:100%;height:44px;background:transparent;border:1.5px solid rgba(66,0,1,.25);color:var(--m);font-size:13px;font-weight:600;font-family:'Poppins',sans-serif;border-radius:9px;cursor:pointer;transition:all .2s;margin-bottom:16px;}
+    .btn-continue:hover{border-color:var(--m);background:rgba(66,0,1,.03);}
+
+    .trust-mini{display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(66,0,1,.07);padding-top:14px;}
+    .tm-item{display:flex;align-items:center;gap:8px;font-size:11px;color:#777;}
+    .tm-icon{width:16px;height:16px;color:var(--m);flex-shrink:0;}
+    .pay-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid rgba(66,0,1,.07);}
+    .pay-icon{height:22px;border:1px solid #eee;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#555;display:flex;align-items:center;background:#fff;}
+
+    .recently-section{padding:48px 80px 64px;}
+    .rs-title{font-size:20px;font-weight:800;color:var(--m);margin-bottom:24px;}
+    .rs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+    .rs-card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(66,0,1,.07);transition:transform .2s,box-shadow .2s;cursor:pointer;}
+    .rs-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(66,0,1,.13);}
+    .rs-img{height:220px;overflow:hidden;}
+    .rs-img img{width:100%;height:100%;object-fit:cover;object-position:top;}
+    .rs-info{padding:13px 14px;}
+    .rs-name{font-size:12px;font-weight:700;color:var(--m);margin-bottom:3px;}
+    .rs-type{font-size:10px;color:#888;margin-bottom:8px;}
+    .rs-price-row{display:flex;align-items:center;gap:7px;}
+    .rs-price{font-size:13px;font-weight:700;color:var(--m);}
+    .rs-old{font-size:11px;color:#bbb;text-decoration:line-through;}
+    .rs-off{background:#e8f5e9;color:#2e7d32;font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600;}
+    .rs-add{width:100%;background:transparent;border:1.5px solid var(--m);color:var(--m);padding:7px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:9px;font-family:'Poppins',sans-serif;transition:all .2s;}
+    .rs-add:hover{background:var(--m);color:var(--g);}
+
+    .wp-float{display:none;}
+
+    @media(max-width:768px){
+      .breadcrumb,.cart-page-header{padding-left:16px;padding-right:16px;}
+      .cart-page-header{flex-wrap:wrap;gap:10px;padding-bottom:16px;}
+      .cart-page-title{font-size:20px;}
+      .cart-layout{grid-template-columns:1fr;padding:0 16px 48px;gap:20px;}
+      .cart-items-head{display:none;}
+      .cart-item{grid-template-columns:1fr;gap:10px;padding:14px;}
+      .ci-img{width:72px;height:86px;}
+      .ci-subtotal{text-align:left;}
+      .ci-remove{justify-content:flex-start;}
+      .order-summary{position:static;}
+      .recently-section{padding:32px 16px 48px;}
+      .rs-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+      .rs-img{height:170px;}
+    }
+    @media(min-width:769px)and(max-width:1024px){
+      .breadcrumb,.cart-page-header{padding-left:32px;padding-right:32px;}
+      .cart-layout{padding:0 32px 60px;grid-template-columns:1fr 300px;}
+      .recently-section{padding:40px 32px 56px;}
+      .rs-grid{grid-template-columns:repeat(2,1fr);}
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>&#8250;</span><span>My Cart</span>
+</div>
+
+<div class="cart-page-header">
+  <div style="display:flex;align-items:center;">
+    <span class="cart-page-title">My Cart</span>
+    <span class="cart-count-badge" id="cart-count-badge">0 items</span>
+  </div>
+  <a href="collection.html" class="continue-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Continue Shopping
+  </a>
+</div>
+
+<div class="cart-layout">
+
+  <div id="cart-left">
+    <div class="free-del-box" id="free-del-box">
+      <div class="fdel-top">
+        <div class="fdel-label">Add <strong id="fdel-amount">Rs.—</strong> more for free delivery!</div>
+      </div>
+      <div class="fdel-track"><div class="fdel-fill" id="fdel-fill" style="width:0%"></div></div>
+    </div>
+    <div class="fdel-success" id="fdel-success" style="display:none;">&#127881; You've unlocked <strong>FREE delivery!</strong></div>
+
+    <div class="cart-items-wrap" id="cart-items-wrap">
+      <div class="cart-items-head">
+        <div>PRODUCT</div><div>PRICE</div><div>QUANTITY</div><div style="text-align:right;">SUBTOTAL</div><div></div>
+      </div>
+      <div id="cart-items-body"></div>
+    </div>
+
+    <div class="empty-cart" id="empty-cart">
+      <div class="empty-icon">&#128722;</div>
+      <div class="empty-title">Your cart is empty</div>
+      <div class="empty-sub">Looks like you haven't added anything yet.<br>Explore our handcrafted blouse collection!</div>
+      <a href="collection.html" class="btn-shop">SHOP NOW</a>
+    </div>
+  </div>
+
+  <div class="order-summary" id="order-summary-panel">
+    <div class="os-title">ORDER SUMMARY</div>
+
+    <div class="coupon-form">
+      <input class="coupon-input" id="coupon-input" type="text" placeholder="Enter coupon code" autocomplete="off">
+      <button class="coupon-btn" id="coupon-apply-btn" onclick="applyCoupon()">APPLY</button>
+    </div>
+    <div class="coupon-result" id="coupon-result"></div>
+    <div class="applied-coupon" id="applied-coupon">
+      <span class="applied-tag" id="applied-tag"></span>
+      <button class="remove-coupon" onclick="removeCoupon()">Remove</button>
+    </div>
+
+    <div class="os-row"><span>MRP Total (<span id="os-item-count">0 items</span>)</span><span id="os-mrp">Rs.0</span></div>
+    <div class="os-row green"><span>Product Discount</span><span id="os-discount">− Rs.0</span></div>
+    <div class="os-row green" id="coupon-row" style="display:none;"><span>Coupon Discount</span><span id="os-coupon-discount"></span></div>
+    <div class="os-row"><span>Delivery Charges</span><span id="os-delivery">FREE</span></div>
+    <div class="os-divider"></div>
+    <div class="os-total"><span>TOTAL PAYABLE</span><span id="os-total">Rs.0</span></div>
+    <div class="os-saving" id="os-saving" style="display:none;">&#127881; You're saving <strong id="os-saving-amt">Rs.0</strong> on this order!</div>
+
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      PROCEED TO CHECKOUT
+    </button>
+    <button class="btn-continue" onclick="window.location.href='collection.html'">Continue Shopping</button>
+
+    <div class="trust-mini">
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>100% Secure Checkout</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>7-Day Easy Returns</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Ships in 2–3 Business Days</div>
+      <div class="tm-item"><svg class="tm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Handcrafted &amp; Authentic</div>
+    </div>
+    <div class="pay-row">
+      <span class="pay-icon">UPI</span><span class="pay-icon">Visa</span><span class="pay-icon">MC</span><span class="pay-icon">NetBanking</span><span class="pay-icon">COD</span>
+    </div>
+  </div>
+
+</div>
+
+<section class="recently-section">
+  <div class="rs-title">You May Also Like</div>
+  <div class="rs-grid">
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-cobalt.jpg" alt="Velvet Zardozi Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Velvet Zardozi Blouse</div><div class="rs-type">Velvet · Zardozi Work</div><div class="rs-price-row"><span class="rs-price">Rs.1,599</span><span class="rs-old">Rs.2,399</span><span class="rs-off">33% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Velvet Zardozi Blouse','Velvet · Zardozi Work',1599,2399,'assets/prod-cobalt.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-green2.jpg" alt="Gota Patti Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Gota Patti Blouse</div><div class="rs-type">Silk · Gota Patti Work</div><div class="rs-price-row"><span class="rs-price">Rs.999</span><span class="rs-old">Rs.1,599</span><span class="rs-off">38% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Gota Patti Blouse','Silk · Gota Patti Work',999,1599,'assets/prod-green2.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-maroon2.jpg" alt="Chikankari Lucknowi Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Chikankari Lucknowi Blouse</div><div class="rs-type">Cotton Silk · Chikankari</div><div class="rs-price-row"><span class="rs-price">Rs.1,099</span><span class="rs-old">Rs.1,799</span><span class="rs-off">39% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Chikankari Lucknowi Blouse','Cotton Silk · Chikankari',1099,1799,'assets/prod-maroon2.jpg')">ADD TO CART</button></div>
+    </div>
+    <div class="rs-card" onclick="window.location.href='product.html'">
+      <div class="rs-img"><img src="assets/prod-darkmaroon.jpg" alt="Chanderi Silk Blouse"></div>
+      <div class="rs-info"><div class="rs-name">Chanderi Silk Blouse</div><div class="rs-type">Chanderi · Block Print</div><div class="rs-price-row"><span class="rs-price">Rs.1,199</span><span class="rs-old">Rs.1,899</span><span class="rs-off">37% off</span></div><button class="rs-add" onclick="quickAdd(event,this,'Chanderi Silk Blouse','Chanderi · Block Print',1199,1899,'assets/prod-darkmaroon.jpg')">ADD TO CART</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="undo-toast" id="undo-toast">
+  <span id="undo-msg">Item removed</span>
+  <button class="undo-btn" id="undo-btn">UNDO</button>
+</div>
+
+<div id="site-footer"></div>
+<div class="wp-float">W</div>
+<script src="includes.js"></script>
+<script>
+(function(){
+
+  var FREE_THRESHOLD = 999;
+  var couponDiscount = 0;
+  var removedSnapshot = null;
+  var undoTimer = null;
+
+  /* restore previously applied coupon (e.g. from a previous visit) */
+  (function(){
+    var saved = window.VamasCoupon.get();
+    if(saved){ couponDiscount = saved.pct; }
+  })();
+
+  function fmt(n){ return 'Rs.' + n.toLocaleString('en-IN'); }
+  function priceParse(p){ return typeof p==='number' ? p : parseInt(String(p).replace(/[^\d]/g,''))||0; }
+  function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escA(s){ return String(s).replace(/'/g,'&#39;').replace(/\\/g,'\\\\'); }
+
+  function safeId(key){ return key.replace(/[^a-zA-Z0-9_-]/g,'_'); }
+
+  /* ── Build & insert item rows ── */
+  function renderItems(){
+    var items = window.VamasCart.get();
+    var body  = document.getElementById('cart-items-body');
+    body.innerHTML = '';
+
+    items.forEach(function(item){
+      var price     = priceParse(item.price);
+      var origPrice = priceParse(item.origPrice || item.price);
+      var discount  = origPrice > price ? Math.round((origPrice-price)/origPrice*100) : 0;
+      var sub       = price * item.qty;
+      var sid       = safeId(item.key);
+
+      var row = document.createElement('div');
+      row.className = 'cart-item';
+      row.setAttribute('data-key', item.key);
+      row.id = 'ci-' + sid;
+      row.innerHTML =
+        '<div class="ci-product">'
+        + '<div class="ci-img"><img src="'+escH(item.img||'assets/slide-pink.jpg')+'" alt="'+escH(item.name||'')+'" onerror="this.src=\'assets/slide-pink.jpg\'"></div>'
+        + '<div>'
+        + '<div class="ci-name">'+escH(item.name||'Blouse')+'</div>'
+        + '<div class="ci-type">'+escH(item.type||'')+'</div>'
+        + '<div class="ci-attrs">'
+        + (item.color && item.color!=='Default' ? '<span class="ci-attr">&#9679; '+escH(item.color)+'</span>' : '')
+        + (item.size  ? '<span class="ci-attr">Size: '+escH(item.size)+'</span>' : '')
+        + '</div>'
+        + '<div class="ci-actions">'
+        + '<button class="ci-action-btn" data-remove="'+escH(item.key)+'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Remove</button>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+        + '<div class="ci-price">'+fmt(price)
+        + (origPrice>price ? '<div class="ci-orig">'+fmt(origPrice)+'</div><div class="ci-save">'+discount+'% off</div>' : '')
+        + '</div>'
+        + '<div class="ci-qty">'
+        + '<button class="ci-qty-btn" data-qty-key="'+escH(item.key)+'" data-delta="-1">&#8722;</button>'
+        + '<span class="ci-qty-num" id="qtynum-'+sid+'">'+item.qty+'</span>'
+        + '<button class="ci-qty-btn" data-qty-key="'+escH(item.key)+'" data-delta="1">+</button>'
+        + '</div>'
+        + '<div class="ci-subtotal" id="sub-'+sid+'">'+fmt(sub)+'</div>'
+        + '<div class="ci-remove"><button class="ci-remove-btn" data-remove="'+escH(item.key)+'" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+
+      body.appendChild(row);
+    });
+
+    /* delegate events */
+    body.querySelectorAll('[data-qty-key]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        changeQty(this.dataset.qtyKey, parseInt(this.dataset.delta));
+      });
+    });
+    body.querySelectorAll('[data-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var key  = this.dataset.remove;
+        var items2 = window.VamasCart.get();
+        var item2; for(var j=0;j<items2.length;j++){ if(items2[j].key===key){ item2=items2[j]; break; } }
+        removeItem(key, item2 ? (item2.name||'Item') : 'Item');
+      });
+    });
+
+    refreshSummary();
+  }
+
+  /* ── Qty ── */
+  function changeQty(key, delta){
+    var items = window.VamasCart.get();
+    var item; for(var j=0;j<items.length;j++){ if(items[j].key===key){ item=items[j]; break; } }
+    if(!item) return;
+    var nq = item.qty + delta;
+    if(nq < 1 || nq > 10) return;
+    window.VamasCart.update(key, nq);
+    var sid = safeId(key);
+    var qEl = document.getElementById('qtynum-'+sid);
+    if(qEl) qEl.textContent = nq;
+    var sEl = document.getElementById('sub-'+sid);
+    if(sEl) sEl.textContent = fmt(priceParse(item.price) * nq);
+    refreshSummary();
+  }
+
+  /* ── Remove ── */
+  function removeItem(key, name){
+    var items = window.VamasCart.get();
+    var item; for(var j=0;j<items.length;j++){ if(items[j].key===key){ item=items[j]; break; } }
+    if(!item) return;
+    removedSnapshot = {key:key, item:JSON.parse(JSON.stringify(item))};
+
+    var el = document.getElementById('ci-'+safeId(key));
+    if(el) el.classList.add('removing');
+    window.VamasCart.remove(key);
+    setTimeout(renderItems, 300);
+
+    clearTimeout(undoTimer);
+    document.getElementById('undo-msg').textContent = '"'+name+'" removed from cart';
+    document.getElementById('undo-toast').classList.add('show');
+    undoTimer = setTimeout(function(){
+      document.getElementById('undo-toast').classList.remove('show');
+      removedSnapshot = null;
+    }, 4000);
+  }
+
+  document.getElementById('undo-btn').addEventListener('click', function(){
+    if(!removedSnapshot) return;
+    window.VamasCart.add(removedSnapshot.item);
+    clearTimeout(undoTimer);
+    document.getElementById('undo-toast').classList.remove('show');
+    removedSnapshot = null;
+    renderItems();
+  });
+
+  /* ── Summary ── */
+  function refreshSummary(){
+    var items   = window.VamasCart.get();
+    var isEmpty = items.length === 0;
+
+    document.getElementById('cart-items-wrap').style.display = isEmpty ? 'none' : '';
+    document.getElementById('empty-cart').classList.toggle('show', isEmpty);
+    document.getElementById('order-summary-panel').style.display = isEmpty ? 'none' : '';
+    document.getElementById('free-del-box').style.display = isEmpty ? 'none' : '';
+    document.getElementById('fdel-success').style.display = 'none';
+
+    if(isEmpty){
+      document.getElementById('cart-count-badge').textContent = '0 items';
+      return;
+    }
+
+    var subtotal  = items.reduce(function(s,i){ return s + priceParse(i.price)*i.qty; }, 0);
+    var mrp       = items.reduce(function(s,i){ return s + priceParse(i.origPrice||i.price)*i.qty; }, 0);
+    var discount  = mrp - subtotal;
+    var couponAmt = couponDiscount > 0 ? Math.round(subtotal * couponDiscount / 100) : 0;
+    var delivery  = (subtotal - couponAmt) >= FREE_THRESHOLD ? 0 : 79;
+    var total     = subtotal - couponAmt + delivery;
+    var totalSave = discount + couponAmt + (delivery===0 ? 79 : 0);
+    var count     = items.reduce(function(s,i){ return s + i.qty; }, 0);
+
+    document.getElementById('cart-count-badge').textContent = count + ' item'+(count!==1?'s':'');
+    document.getElementById('os-item-count').textContent    = count + ' item'+(count!==1?'s':'');
+    document.getElementById('os-mrp').textContent           = fmt(mrp);
+    document.getElementById('os-discount').textContent      = '− '+fmt(discount);
+    document.getElementById('os-total').textContent         = fmt(total);
+    document.getElementById('os-saving').style.display      = totalSave > 0 ? 'block' : 'none';
+    document.getElementById('os-saving-amt').textContent    = fmt(totalSave);
+
+    var delEl = document.getElementById('os-delivery');
+    if(delivery===0){ delEl.textContent='FREE'; delEl.style.color='#2e7d32'; }
+    else             { delEl.textContent=fmt(delivery); delEl.style.color='#333'; }
+
+    document.getElementById('coupon-row').style.display = couponAmt>0 ? 'flex' : 'none';
+    if(couponAmt>0) document.getElementById('os-coupon-discount').textContent = '− '+fmt(couponAmt);
+
+    var pct = Math.min(100, Math.round(subtotal / FREE_THRESHOLD * 100));
+    document.getElementById('fdel-fill').style.width = pct+'%';
+    if(subtotal >= FREE_THRESHOLD){
+      document.getElementById('free-del-box').style.display = 'none';
+      document.getElementById('fdel-success').style.display = 'block';
+    } else {
+      document.getElementById('free-del-box').style.display = 'block';
+      document.getElementById('fdel-amount').textContent = fmt(FREE_THRESHOLD - subtotal);
+    }
+  }
+
+  /* ── Coupon (uses shared VamasCoupon) ── */
+  function getCouponSubtotal(){
+    return window.VamasCart.get().reduce(function(s,i){ return s+((typeof i.price==='number'?i.price:parseInt(String(i.price).replace(/[^\d]/g,''))||0)*i.qty); },0);
+  }
+
+  function restoreCouponUI(){
+    var saved = window.VamasCoupon.get();
+    if(saved){
+      couponDiscount = saved.pct;
+      document.getElementById('applied-tag').textContent = saved.code+' — '+saved.pct+'% off';
+      document.getElementById('applied-coupon').classList.add('show');
+      document.getElementById('coupon-apply-btn').disabled = true;
+      var res = document.getElementById('coupon-result');
+      res.className='coupon-result ok';
+      res.textContent='&#10003; '+saved.code+' applied — '+saved.pct+'% off!';
+    }
+  }
+
+  window.applyCoupon = function(){
+    var code = document.getElementById('coupon-input').value.trim().toUpperCase();
+    var res  = document.getElementById('coupon-result');
+    if(!code){ res.className='coupon-result err'; res.textContent='Please enter a coupon code.'; return; }
+    var result = window.VamasCoupon.apply(code, getCouponSubtotal());
+    if(result.ok){
+      couponDiscount = result.pct;
+      res.className='coupon-result ok';
+      res.textContent='&#10003; '+code+' applied — '+result.pct+'% off!';
+      document.getElementById('applied-tag').textContent = code+' — '+result.pct+'% off';
+      document.getElementById('applied-coupon').classList.add('show');
+      document.getElementById('coupon-input').value = '';
+      document.getElementById('coupon-apply-btn').disabled = true;
+    } else {
+      couponDiscount = 0;
+      res.className='coupon-result err';
+      res.textContent='&#10007; '+result.msg;
+      document.getElementById('applied-coupon').classList.remove('show');
+    }
+    refreshSummary();
+  };
+  document.getElementById('coupon-input').addEventListener('keydown',function(e){ if(e.key==='Enter') applyCoupon(); });
+
+  window.removeCoupon = function(){
+    couponDiscount = 0;
+    window.VamasCoupon.remove();
+    document.getElementById('applied-coupon').classList.remove('show');
+    document.getElementById('coupon-result').className = 'coupon-result';
+    document.getElementById('coupon-result').textContent = '';
+    document.getElementById('coupon-apply-btn').disabled = false;
+    refreshSummary();
+  };
+
+  /* ── Quick add from recommendations ── */
+  window.quickAdd = function(e, btn, name, type, price, origPrice, img){
+    e.stopPropagation();
+    window.VamasCart.add({id:name.toLowerCase().replace(/\s+/g,'-'), name:name, type:type, price:price, origPrice:origPrice, img:img, color:'Default', size:'34'});
+    btn.textContent='&#10003; ADDED'; btn.style.background='#2e7d32'; btn.style.color='#fff'; btn.style.borderColor='#2e7d32';
+    setTimeout(function(){ btn.textContent='ADD TO CART'; btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; }, 1800);
+    renderItems();
+  };
+
+  document.addEventListener('vamas:cartUpdated', function(){ renderItems(); });
+
+  renderItems();
+  restoreCouponUI();
+
+})();
+</script>
+</body>
+</html>

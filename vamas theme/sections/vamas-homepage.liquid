@@ -1,0 +1,392 @@
+{{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
+
+{% comment %} ── Announcement Bar is rendered globally by sections/vamas-header.liquid (see layout/theme.liquid) ── {% endcomment %}
+
+{% comment %} ── Hero Slider ──────────────────────── {% endcomment %}
+<div class="vamas-slider" id="vamas-slider">
+  <div class="vamas-slider__track" id="vamas-track">
+
+    {% for block in section.blocks %}
+      {% if block.type == 'slide' %}
+        <div class="vamas-slide" style="background: {{ block.settings.slide_bg | default: '#420001' }};">
+          <div class="vamas-slide__text">
+            <p class="vamas-slide__eyebrow">{{ block.settings.eyebrow }}</p>
+            <h1 class="vamas-slide__heading">
+              {{ block.settings.line1 }}<br>
+              <em>{{ block.settings.line2_accent }}</em><br>
+              {{ block.settings.line3 }}
+            </h1>
+            <p class="vamas-slide__sub">{{ block.settings.subtext }}</p>
+            <div class="vamas-slide__btns">
+              <a href="{{ block.settings.btn1_url }}" class="btn-primary">{{ block.settings.btn1_text }}</a>
+              <a href="{{ block.settings.btn2_url }}" class="btn-outline">{{ block.settings.btn2_text }}</a>
+            </div>
+          </div>
+          <div class="vamas-slider__image">
+            {% if block.settings.slide_image != blank %}
+              <img src="{{ block.settings.slide_image | img_url: '640x840', crop: 'center' }}"
+                   alt="{{ block.settings.slide_image.alt | escape | default: block.settings.line1 }}"
+                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                   width="640" height="840">
+            {% else %}
+              {{ 'model-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+  {% assign slide_count = 0 %}
+  {% for block in section.blocks %}{% if block.type == 'slide' %}{% assign slide_count = slide_count | plus: 1 %}{% endif %}{% endfor %}
+
+  {% if slide_count > 1 %}
+    <button class="vamas-slider__arrow vamas-slider__arrow--prev" id="vamas-prev" aria-label="Previous slide">&#8592;</button>
+    <button class="vamas-slider__arrow vamas-slider__arrow--next" id="vamas-next" aria-label="Next slide">&#8594;</button>
+    <div class="vamas-slider__dots" id="vamas-dots">
+      {% assign idx = 0 %}
+      {% for block in section.blocks %}
+        {% if block.type == 'slide' %}
+          <button class="vamas-slider__dot {% if idx == 0 %}active{% endif %}"
+                  data-idx="{{ idx }}" aria-label="Slide {{ idx | plus: 1 }}"></button>
+          {% assign idx = idx | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+(function(){
+  var track = document.getElementById('vamas-track');
+  var dots  = document.querySelectorAll('#vamas-dots .vamas-slider__dot');
+  var cur   = 0;
+  var total = dots.length;
+  var timer;
+  if(!track || total < 2) return;
+
+  function goTo(i){
+    cur = (i + total) % total;
+    track.style.transform = 'translateX(-' + (cur * 100) + '%)';
+    dots.forEach(function(d,j){ d.classList.toggle('active', j === cur); });
+  }
+
+  function reset(){ clearInterval(timer); timer = setInterval(function(){ goTo(cur+1); }, 5000); }
+
+  var prev = document.getElementById('vamas-prev');
+  var next = document.getElementById('vamas-next');
+  if(prev) prev.addEventListener('click', function(){ goTo(cur-1); reset(); });
+  if(next) next.addEventListener('click', function(){ goTo(cur+1); reset(); });
+  dots.forEach(function(d){ d.addEventListener('click', function(){ goTo(+this.dataset.idx); reset(); }); });
+  reset();
+})();
+</script>
+
+{% comment %} ── Trust Bar ────────────────────────── {% endcomment %}
+<div class="vamas-trust">
+  <div class="vamas-trust__item">
+    <div class="vamas-trust__icon">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div><div class="vamas-trust__title">100% Authentic</div><div class="vamas-trust__sub">Genuine handcrafted fabric</div></div>
+  </div>
+  <div class="vamas-trust__item">
+    <div class="vamas-trust__icon">
+      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <div><div class="vamas-trust__title">Fast Delivery</div><div class="vamas-trust__sub">3–5 business days</div></div>
+  </div>
+  <div class="vamas-trust__item">
+    <div class="vamas-trust__icon">
+      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+    </div>
+    <div><div class="vamas-trust__title">Easy Returns</div><div class="vamas-trust__sub">7-day hassle-free</div></div>
+  </div>
+  <div class="vamas-trust__item">
+    <div class="vamas-trust__icon">
+      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    </div>
+    <div><div class="vamas-trust__title">Secure Payment</div><div class="vamas-trust__sub">UPI · Card · Net Banking · COD</div></div>
+  </div>
+</div>
+
+{% comment %} ── Categories ───────────────────────── {% endcomment %}
+{% assign cat_blocks = section.blocks | where: 'type', 'category' %}
+{% if cat_blocks.size > 0 and section.settings.show_categories %}
+<section class="vamas-section">
+  <div class="vamas-section__header">
+    <div>
+      <h2 class="vamas-section__title">Shop by <span>Occasion</span></h2>
+      <p class="vamas-section__subtitle">Find the perfect blouse for every moment</p>
+    </div>
+    <a href="{{ section.settings.cat_view_all | default: '/collections/all' }}" class="vamas-view-all">VIEW ALL</a>
+  </div>
+  <div class="vamas-cat-grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'category' %}
+        <a href="{{ block.settings.cat_url | default: '/collections/all' }}" class="vamas-cat-card">
+          {% if block.settings.cat_image != blank %}
+            <img src="{{ block.settings.cat_image | img_url: '400x533', crop: 'center' }}"
+                 alt="{{ block.settings.cat_name }}" loading="lazy" width="400" height="533">
+          {% else %}
+            {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+          <div class="vamas-cat-card__overlay">
+            <div>
+              <div class="vamas-cat-card__label">{{ block.settings.cat_name }}</div>
+              <div class="vamas-cat-card__count">{{ block.settings.cat_count }} styles</div>
+            </div>
+          </div>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── New Arrivals ─────────────────────── {% endcomment %}
+{% if section.settings.show_new_arrivals %}
+<section class="vamas-section vamas-section--alt">
+  <div class="vamas-section__header">
+    <div>
+      <h2 class="vamas-section__title">New <span>Arrivals</span></h2>
+      <p class="vamas-section__subtitle">Fresh styles added every week</p>
+    </div>
+    <a href="{{ collections[section.settings.new_arrivals_collection].url | default: '/collections/all' }}" class="vamas-view-all">VIEW ALL</a>
+  </div>
+  <div class="vamas-prod-grid">
+    {% assign na_col = collections[section.settings.new_arrivals_collection] %}
+    {% for product in na_col.products limit: 6 %}
+      {% render 'vamas-product-card', product: product %}
+    {% else %}
+      {% for i in (1..6) %}{% render 'vamas-product-card-placeholder', index: i %}{% endfor %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Brand Story ──────────────────────── {% endcomment %}
+{% if section.settings.show_brand %}
+<section class="vamas-brand">
+  <div class="vamas-brand__text">
+    <p class="vamas-brand__eyebrow">{{ section.settings.brand_eyebrow | default: 'OUR STORY' }}</p>
+    <h2 class="vamas-brand__heading">{{ section.settings.brand_heading }}</h2>
+    <p class="vamas-brand__text-body">{{ section.settings.brand_text }}</p>
+    <div class="vamas-brand__stats">
+      {% for block in section.blocks %}
+        {% if block.type == 'stat' %}
+          <div>
+            <div class="vamas-brand__stat-num">{{ block.settings.stat_num }}</div>
+            <div class="vamas-brand__stat-lbl">{{ block.settings.stat_lbl }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <a href="{{ section.settings.brand_btn_url | default: '/pages/about' }}" class="btn-outline">
+      {{ section.settings.brand_btn_text | default: 'EXPLORE OUR STORY' }}
+    </a>
+  </div>
+  <div class="vamas-brand__image">
+    {% if section.settings.brand_image != blank %}
+      <img src="{{ section.settings.brand_image | img_url: '500x640', crop: 'center' }}"
+           alt="Vamas brand story" loading="lazy" width="500" height="640">
+    {% else %}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Best Sellers ─────────────────────── {% endcomment %}
+{% if section.settings.show_bestsellers %}
+<section class="vamas-section">
+  <div class="vamas-section__header">
+    <div>
+      <h2 class="vamas-section__title">Best <span>Sellers</span></h2>
+      <p class="vamas-section__subtitle">Most loved by our customers</p>
+    </div>
+    <a href="{{ collections[section.settings.bestsellers_collection].url | default: '/collections/all' }}" class="vamas-view-all">VIEW ALL</a>
+  </div>
+  <div class="vamas-prod-grid">
+    {% assign bs_col = collections[section.settings.bestsellers_collection] %}
+    {% for product in bs_col.products limit: 6 %}
+      {% render 'vamas-product-card', product: product %}
+    {% else %}
+      {% for i in (1..6) %}{% render 'vamas-product-card-placeholder', index: i %}{% endfor %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Browse Tags ──────────────────────── {% endcomment %}
+<div class="vamas-tags">
+  <a href="/collections/zari-work" class="vamas-tag">ZARI WORK</a>
+  <a href="/collections/mirror-work" class="vamas-tag">MIRROR WORK</a>
+  <a href="/collections/embroidery" class="vamas-tag">EMBROIDERY</a>
+  <a href="/collections/velvet" class="vamas-tag">VELVET</a>
+  <a href="/collections/printed" class="vamas-tag">PRINTED</a>
+  <a href="/collections/bridal" class="vamas-tag">BRIDAL</a>
+  <a href="/collections/backless" class="vamas-tag">BACKLESS</a>
+  <a href="/collections/cotton" class="vamas-tag">COTTON</a>
+  <a href="/collections/pure-silk" class="vamas-tag">PURE SILK</a>
+  <a href="/collections/chikankari" class="vamas-tag">CHIKANKARI</a>
+  <a href="/collections/phulkari" class="vamas-tag">PHULKARI</a>
+  <a href="/collections/gota-patti" class="vamas-tag">GOTA PATTI</a>
+</div>
+
+{% comment %} ── Testimonials ─────────────────────── {% endcomment %}
+{% assign test_blocks = section.blocks | where: 'type', 'testimonial' %}
+{% if test_blocks.size > 0 and section.settings.show_testimonials %}
+<section class="vamas-section vamas-section--alt">
+  <div class="vamas-section__header">
+    <div>
+      <h2 class="vamas-section__title">Customer <span>Reviews</span></h2>
+      <p class="vamas-section__subtitle">Over 10,000 happy customers</p>
+    </div>
+  </div>
+  <div class="vamas-test-grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'testimonial' %}
+        <div class="vamas-test-card">
+          <div class="vamas-test-card__stars">
+            {% for i in (1..block.settings.rating) %}★{% endfor %}
+          </div>
+          <p class="vamas-test-card__text">"{{ block.settings.review_text }}"</p>
+          <div class="vamas-test-card__author">
+            <div class="vamas-test-card__avatar">{{ block.settings.reviewer_name | slice: 0 | upcase }}</div>
+            <div>
+              <div class="vamas-test-card__name">{{ block.settings.reviewer_name }}</div>
+              <div class="vamas-test-card__info">Verified Buyer · {{ block.settings.product_type | default: 'Blouse Collection' }}</div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Newsletter ───────────────────────── {% endcomment %}
+{% if section.settings.show_newsletter %}
+<section class="vamas-newsletter">
+  <p class="vamas-newsletter__eyebrow">EXCLUSIVE UPDATES</p>
+  <h2 class="vamas-newsletter__heading">{{ section.settings.nl_heading | default: 'Stay in Style' }}</h2>
+  <p class="vamas-newsletter__sub">{{ section.settings.nl_subtext | default: 'Subscribe for new arrivals, exclusive offers & style inspiration' }}</p>
+  {% form 'customer', id: 'vamas-nl-form' %}
+    <input type="hidden" name="contact[tags]" value="newsletter">
+    <div class="vamas-newsletter__form">
+      <input class="vamas-newsletter__input" type="email" name="contact[email]"
+             placeholder="{{ section.settings.nl_placeholder | default: 'Your email address' }}" required>
+      <button type="submit" class="vamas-newsletter__btn">
+        {{ section.settings.nl_btn | default: 'SUBSCRIBE' }}
+      </button>
+    </div>
+    {% if form.posted_successfully? %}
+      <p style="color:var(--color-maroon);margin-top:16px;font-size:14px;font-weight:700;">
+        Thank you for subscribing! ✦
+      </p>
+    {% endif %}
+  {% endform %}
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Vamas Homepage",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Categories Section" },
+    { "type": "checkbox", "id": "show_categories", "label": "Show Categories", "default": true },
+    { "type": "url", "id": "cat_view_all", "label": "View All URL" },
+    { "type": "header", "content": "New Arrivals" },
+    { "type": "checkbox", "id": "show_new_arrivals", "label": "Show New Arrivals", "default": true },
+    { "type": "collection", "id": "new_arrivals_collection", "label": "New Arrivals Collection" },
+    { "type": "header", "content": "Best Sellers" },
+    { "type": "checkbox", "id": "show_bestsellers", "label": "Show Best Sellers", "default": true },
+    { "type": "collection", "id": "bestsellers_collection", "label": "Best Sellers Collection" },
+    { "type": "header", "content": "Brand Story" },
+    { "type": "checkbox", "id": "show_brand", "label": "Show Brand Section", "default": true },
+    { "type": "text", "id": "brand_eyebrow", "label": "Eyebrow Text", "default": "OUR STORY" },
+    { "type": "textarea", "id": "brand_heading", "label": "Heading", "default": "Woven with Love, Crafted with Precision" },
+    { "type": "textarea", "id": "brand_text", "label": "Body Text", "default": "Each blouse is handcrafted by skilled artisans using premium fabrics sourced across India. From bridal zari to everyday cotton, we celebrate the art of Indian craftsmanship." },
+    { "type": "image_picker", "id": "brand_image", "label": "Brand Image" },
+    { "type": "text", "id": "brand_btn_text", "label": "Button Text", "default": "EXPLORE OUR STORY" },
+    { "type": "url", "id": "brand_btn_url", "label": "Button URL" },
+    { "type": "header", "content": "Testimonials" },
+    { "type": "checkbox", "id": "show_testimonials", "label": "Show Testimonials", "default": true },
+    { "type": "header", "content": "Newsletter" },
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show Newsletter", "default": true },
+    { "type": "text", "id": "nl_heading", "label": "Heading", "default": "Stay in Style" },
+    { "type": "text", "id": "nl_subtext", "label": "Subtext", "default": "Subscribe for new arrivals, exclusive offers & style inspiration" },
+    { "type": "text", "id": "nl_placeholder", "label": "Input Placeholder", "default": "Your email address" },
+    { "type": "text", "id": "nl_btn", "label": "Button Text", "default": "SUBSCRIBE" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Hero Slide",
+      "settings": [
+        { "type": "color", "id": "slide_bg", "label": "Background Color", "default": "#420001" },
+        { "type": "image_picker", "id": "slide_image", "label": "Blouse Image" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow Text", "default": "NEW COLLECTION 2026" },
+        { "type": "text", "id": "line1", "label": "Heading Line 1", "default": "Craft Your" },
+        { "type": "text", "id": "line2_accent", "label": "Heading Accent Word (white)", "default": "Perfect" },
+        { "type": "text", "id": "line3", "label": "Heading Line 3", "default": "Silhouette" },
+        { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Handcrafted blouses that celebrate every occasion with elegance & grace." },
+        { "type": "text", "id": "btn1_text", "label": "Primary Button", "default": "SHOP NOW" },
+        { "type": "url", "id": "btn1_url", "label": "Primary Button URL" },
+        { "type": "text", "id": "btn2_text", "label": "Secondary Button", "default": "VIEW LOOKBOOK" },
+        { "type": "url", "id": "btn2_url", "label": "Secondary Button URL" }
+      ]
+    },
+    {
+      "type": "category",
+      "name": "Category Card",
+      "settings": [
+        { "type": "image_picker", "id": "cat_image", "label": "Category Image" },
+        { "type": "text", "id": "cat_name", "label": "Category Name", "default": "BRIDAL" },
+        { "type": "text", "id": "cat_count", "label": "Style Count", "default": "120+" },
+        { "type": "url", "id": "cat_url", "label": "Collection URL" }
+      ]
+    },
+    {
+      "type": "stat",
+      "name": "Brand Stat",
+      "settings": [
+        { "type": "text", "id": "stat_num", "label": "Number", "default": "500+" },
+        { "type": "text", "id": "stat_lbl", "label": "Label", "default": "DESIGNS" }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Customer Review",
+      "settings": [
+        { "type": "range", "id": "rating", "min": 1, "max": 5, "step": 1, "label": "Star Rating", "default": 5 },
+        { "type": "textarea", "id": "review_text", "label": "Review Text" },
+        { "type": "text", "id": "reviewer_name", "label": "Customer Name" },
+        { "type": "text", "id": "product_type", "label": "Product Bought", "default": "Blouse Collection" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Homepage",
+      "blocks": [
+        { "type": "slide", "settings": { "slide_bg": "#420001", "eyebrow": "NEW COLLECTION 2026", "line1": "Craft Your", "line2_accent": "Perfect", "line3": "Silhouette", "btn1_text": "SHOP NOW", "btn2_text": "VIEW LOOKBOOK" } },
+        { "type": "slide", "settings": { "slide_bg": "#1a0a00", "eyebrow": "BRIDAL COLLECTION", "line1": "Elegance", "line2_accent": "Woven in", "line3": "Every Thread", "btn1_text": "BRIDAL EDIT", "btn2_text": "EXPLORE MORE" } },
+        { "type": "slide", "settings": { "slide_bg": "#2d0001", "eyebrow": "FESTIVE SEASON EDIT", "line1": "Celebrate in", "line2_accent": "Colour", "line3": "& Style", "btn1_text": "SHOP FESTIVE", "btn2_text": "VIEW OFFERS" } },
+        { "type": "category", "settings": { "cat_name": "BRIDAL", "cat_count": "120+" } },
+        { "type": "category", "settings": { "cat_name": "FESTIVE", "cat_count": "90+" } },
+        { "type": "category", "settings": { "cat_name": "CASUAL", "cat_count": "200+" } },
+        { "type": "category", "settings": { "cat_name": "PARTY WEAR", "cat_count": "80+" } },
+        { "type": "stat", "settings": { "stat_num": "500+", "stat_lbl": "DESIGNS" } },
+        { "type": "stat", "settings": { "stat_num": "10K+", "stat_lbl": "CUSTOMERS" } },
+        { "type": "stat", "settings": { "stat_num": "4.9★", "stat_lbl": "RATING" } },
+        { "type": "testimonial", "settings": { "rating": 5, "review_text": "Absolutely gorgeous blouse! The zari work is stunning and stitching quality is perfect. Got so many compliments at the wedding!", "reviewer_name": "Priya Sharma", "product_type": "Silk Zari Blouse" } },
+        { "type": "testimonial", "settings": { "rating": 5, "review_text": "Fast delivery and beautiful packaging. The fabric quality is exactly as shown. Will definitely order again from Vamas!", "reviewer_name": "Anita Menon", "product_type": "Kanjeevaram Blouse" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

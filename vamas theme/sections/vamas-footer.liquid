@@ -1,0 +1,179 @@
+{{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
+
+<div class="vamas-dark-bottom">
+
+  {% comment %} ── Dark Newsletter ──────────────────── {% endcomment %}
+  {% if section.settings.show_newsletter %}
+  <div class="vamas-dark-nl">
+    <div class="vamas-dark-nl-eye">{{ section.settings.nl_eyebrow }}</div>
+    <div class="vamas-dark-nl-h3">{{ section.settings.nl_heading }} <em>{{ section.settings.nl_heading_accent }}</em></div>
+    <div class="vamas-dark-nl-sub">{{ section.settings.nl_subtext }}</div>
+    {% form 'customer', id: 'vamas-dark-nl-form' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="vamas-dark-nl-form">
+        <input class="vamas-dark-nl-input" type="email" name="contact[email]"
+               placeholder="{{ section.settings.nl_placeholder }}" required>
+        <button type="submit" class="vamas-dark-nl-btn">{{ section.settings.nl_btn }}</button>
+      </div>
+      {% if form.posted_successfully? %}
+        <p style="color:var(--color-gold);margin-top:16px;font-size:12px;font-weight:700;">
+          Thank you for subscribing! ✦
+        </p>
+      {% endif %}
+    {% endform %}
+  </div>
+  {% endif %}
+
+  {% comment %} ── Dark Footer ──────────────────────── {% endcomment %}
+  <footer class="vamas-dark-footer">
+    <div class="vamas-dark-footer-grid">
+
+      <div>
+        <div class="vamas-dark-footer-logo">
+          <img src="{{ 'vamas-logo.avif' | asset_url }}" alt="{{ section.settings.brand_name }}" class="vamas-dark-footer-logo-img" onerror="this.style.display='none'">
+        </div>
+        <p class="vamas-dark-footer-desc">{{ section.settings.brand_desc }}</p>
+        <div class="vamas-dark-footer-socials">
+          {% if section.settings.instagram != blank %}
+            <a href="{{ section.settings.instagram }}" class="vamas-dark-soc" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+          {% endif %}
+          {% if section.settings.facebook != blank %}
+            <a href="{{ section.settings.facebook }}" class="vamas-dark-soc" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+          {% endif %}
+          {% if section.settings.whatsapp != blank %}
+            <a href="https://wa.me/{{ section.settings.whatsapp }}" class="vamas-dark-soc" aria-label="WhatsApp" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </a>
+          {% endif %}
+          {% if section.settings.youtube != blank %}
+            <a href="{{ section.settings.youtube }}" class="vamas-dark-soc" aria-label="YouTube" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% for block in section.blocks %}
+        {% if block.type == 'footer_column' %}
+          <div {{ block.shopify_attributes }}>
+            <div class="vamas-dark-foot-head">{{ block.settings.title }}</div>
+            <div class="vamas-dark-foot-links">
+              {% for i in (1..5) %}
+                {% assign label_key = 'link' | append: i | append: '_label' %}
+                {% assign url_key = 'link' | append: i | append: '_url' %}
+                {% assign link_label = block.settings[label_key] %}
+                {% assign link_url = block.settings[url_key] %}
+                {% if link_label != blank %}
+                  <a href="{{ link_url | default: '#' }}">{{ link_label }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div>
+        <div class="vamas-dark-foot-head">CONTACT US</div>
+        <div class="vamas-dark-foot-links">
+          {% if section.settings.contact_email != blank %}
+            <a href="mailto:{{ section.settings.contact_email }}">{{ section.settings.contact_email }}</a>
+          {% endif %}
+          {% if section.settings.contact_phone != blank %}
+            <a href="tel:{{ section.settings.contact_phone }}">{{ section.settings.contact_phone }}</a>
+          {% endif %}
+          {% if section.settings.contact_hours != blank %}
+            <span style="color:rgba(231,209,166,0.3);font-size:10px;">{{ section.settings.contact_hours }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="vamas-dark-footer-bot">
+      <div class="vamas-dark-foot-copy">&copy; {{ 'now' | date: '%Y' }} {{ section.settings.brand_name }}. {{ section.settings.copyright_text }}</div>
+      <div class="vamas-dark-foot-pay">{{ section.settings.payment_text }}</div>
+    </div>
+  </footer>
+</div>
+
+{% schema %}
+{
+  "name": "Vamas Footer",
+  "settings": [
+    { "type": "text", "id": "brand_name", "label": "Brand Name", "default": "Vamas" },
+    { "type": "textarea", "id": "brand_desc", "label": "Brand Description", "default": "Premium handcrafted blouses celebrating Indian artistry. Every piece tells a story woven with love and skill." },
+    { "type": "header", "content": "Newsletter" },
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show Newsletter", "default": true },
+    { "type": "text", "id": "nl_eyebrow", "label": "Eyebrow Text", "default": "EXCLUSIVE UPDATES" },
+    { "type": "text", "id": "nl_heading", "label": "Heading", "default": "Stay in" },
+    { "type": "text", "id": "nl_heading_accent", "label": "Heading Accent (italic)", "default": "style." },
+    { "type": "textarea", "id": "nl_subtext", "label": "Subtext", "default": "Subscribe for new arrivals, exclusive offers & style inspiration" },
+    { "type": "text", "id": "nl_placeholder", "label": "Input Placeholder", "default": "Enter your email address" },
+    { "type": "text", "id": "nl_btn", "label": "Button Text", "default": "SUBSCRIBE" },
+    { "type": "header", "content": "Social Links" },
+    { "type": "url", "id": "instagram", "label": "Instagram URL" },
+    { "type": "url", "id": "facebook", "label": "Facebook URL" },
+    { "type": "text", "id": "whatsapp", "label": "WhatsApp Number (with country code)", "placeholder": "919876543210" },
+    { "type": "url", "id": "youtube", "label": "YouTube URL" },
+    { "type": "header", "content": "Contact" },
+    { "type": "text", "id": "contact_email", "label": "Email", "default": "support@vamas.in" },
+    { "type": "text", "id": "contact_phone", "label": "Phone", "default": "+919876543210" },
+    { "type": "text", "id": "contact_hours", "label": "Support Hours", "default": "Mon-Sat: 10am - 6pm" },
+    { "type": "header", "content": "Bottom Bar" },
+    { "type": "text", "id": "copyright_text", "label": "Copyright Text (after brand name)", "default": "All rights reserved." },
+    { "type": "text", "id": "payment_text", "label": "Payment Methods Text", "default": "UPI &nbsp;&middot;&nbsp; Visa &nbsp;&middot;&nbsp; Mastercard &nbsp;&middot;&nbsp; Net Banking &nbsp;&middot;&nbsp; COD" }
+  ],
+  "blocks": [
+    {
+      "type": "footer_column",
+      "name": "Footer Column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Column Title", "default": "QUICK LINKS" },
+        { "type": "text", "id": "link1_label", "label": "Link 1 Label" },
+        { "type": "url", "id": "link1_url", "label": "Link 1 URL" },
+        { "type": "text", "id": "link2_label", "label": "Link 2 Label" },
+        { "type": "url", "id": "link2_url", "label": "Link 2 URL" },
+        { "type": "text", "id": "link3_label", "label": "Link 3 Label" },
+        { "type": "url", "id": "link3_url", "label": "Link 3 URL" },
+        { "type": "text", "id": "link4_label", "label": "Link 4 Label" },
+        { "type": "url", "id": "link4_url", "label": "Link 4 URL" },
+        { "type": "text", "id": "link5_label", "label": "Link 5 Label" },
+        { "type": "url", "id": "link5_url", "label": "Link 5 URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Footer",
+      "blocks": [
+        {
+          "type": "footer_column",
+          "settings": {
+            "title": "QUICK LINKS",
+            "link1_label": "New Arrivals", "link1_url": "/collections/new-arrivals",
+            "link2_label": "All Collections", "link2_url": "/collections/all",
+            "link3_label": "Best Sellers", "link3_url": "/collections/best-sellers",
+            "link4_label": "About Us", "link4_url": "/pages/about",
+            "link5_label": "Contact", "link5_url": "/pages/contact"
+          }
+        },
+        {
+          "type": "footer_column",
+          "settings": {
+            "title": "CUSTOMER CARE",
+            "link1_label": "Size Guide", "link1_url": "/pages/size-guide",
+            "link2_label": "Track Order", "link2_url": "/pages/track-order",
+            "link3_label": "Returns & Exchange", "link3_url": "/policies/refund-policy",
+            "link4_label": "FAQ", "link4_url": "/pages/faq",
+            "link5_label": "Shipping Policy", "link5_url": "/pages/shipping"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

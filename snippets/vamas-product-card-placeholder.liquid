@@ -1,0 +1,33 @@
+{% comment %} Placeholder card shown when no collection is assigned {% endcomment %}
+{% assign names = 'Silk Zari Blouse,Mirror Work Blouse,Velvet Emboss,Kanjeevaram Cut,Phulkari Blouse,Chikankari Blouse' | split: ',' %}
+{% assign types = 'Banarasi Silk,Cotton Embroidery,Premium Velvet,Pure Silk,Punjabi Embroidery,Lucknowi Work' | split: ',' %}
+{% assign prices = '1299,1499,1099,2199,999,1399' | split: ',' %}
+{% assign og_prices = '1999,2199,1799,2999,1499,1899' | split: ',' %}
+{% assign i0 = index | minus: 1 %}
+
+<div class="vamas-prod-card">
+  <div class="vamas-prod-card__img">
+    <a href="/collections/all">
+      {{ 'product-' | append: index | placeholder_svg_tag: 'placeholder-svg' }}
+    </a>
+    <span class="vamas-prod-card__badge">NEW</span>
+    <button class="vamas-prod-card__wishlist" aria-label="Add to wishlist">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+  </div>
+  <div class="vamas-prod-card__body">
+    <div class="vamas-prod-card__name">{{ names[i0] }}</div>
+    <div class="vamas-prod-card__type">{{ types[i0] }}</div>
+    <div class="vamas-prod-card__colors">
+      <div class="vamas-prod-card__color" style="background:#420001;"></div>
+      <div class="vamas-prod-card__color" style="background:#e7d1a6;"></div>
+      <div class="vamas-prod-card__color" style="background:#1a1a2e;"></div>
+    </div>
+    <div class="vamas-prod-card__stars">★★★★★ <span class="vamas-prod-card__review-count">({{ index | times: 13 | plus: 8 }})</span></div>
+    <div class="vamas-prod-card__price">
+      <span class="price">₹{{ prices[i0] }}</span>
+      <span class="original">₹{{ og_prices[i0] }}</span>
+    </div>
+    <a href="/collections/all" class="vamas-atc" style="display:block;text-align:center;">ADD TO CART</a>
+  </div>
+</div>

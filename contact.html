@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - VAMAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --m: #420001;
+      --ml: #6a0002;
+      --g: #e7d1a6;
+      --gd: #c9a96e;
+      --w: #ffffff;
+      --bg: #fff9f2;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; color: var(--m); background: var(--w); }
+    a { text-decoration: none; }
+
+    /* -- Announce --- */
+    .ann {
+      background: var(--g);
+      color: var(--m);
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--gd);
+    }
+
+    /* -- NAV --- */
+    .nav-outer {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 10px 48px;
+      background: transparent;
+      pointer-events: none;
+    }
+    .nav {
+      background: #fff;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 8px 8px 22px;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.10), 0 1px 6px rgba(0,0,0,0.06);
+      pointer-events: all;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-img {
+      height: 42px; width: auto;
+      object-fit: contain; display: block;
+    }
+    .nav-brand { color: var(--m); font-size: 15px; font-weight: 800; letter-spacing: 3px; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: rgba(66,0,1,0.65);
+      font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+      padding: 4px 0; transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--m); }
+    .nav-icons { display: flex; align-items: center; gap: 14px; }
+    .nav-icons a { color: rgba(66,0,1,0.6); font-size: 17px; position: relative; transition: color 0.2s; }
+    .nav-icons a:hover { color: var(--m); }
+    .nav-contact {
+      background: var(--m); color: var(--g) !important;
+      padding: 9px 20px; border-radius: 100px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      white-space: nowrap; transition: background 0.2s;
+      margin-left: 4px;
+    }
+    .nav-contact:hover { background: var(--ml) !important; }
+    .cart-badge {
+      position: absolute; top: -7px; right: -7px;
+      background: var(--m); color: var(--g);
+      width: 16px; height: 16px; border-radius: 50%;
+      font-size: 8px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* -- Hero --- */
+    .contact-hero {
+      background: var(--m);
+      padding: 80px 80px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 20% 50%, rgba(231,209,166,0.06) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 30%, rgba(231,209,166,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-eye {
+      font-size: 10px; font-weight: 700; letter-spacing: 4px;
+      color: rgba(231,209,166,0.5); margin-bottom: 18px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 56px; font-weight: 700; color: var(--g);
+      line-height: 1.15; margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: 14px; color: rgba(231,209,166,0.55);
+      letter-spacing: 0.5px;
+    }
+
+    /* -- Contact Section --- */
+    .contact-sec {
+      padding: 72px 80px;
+      background: var(--bg);
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* -- Form --- */
+    .form-wrap {
+      background: var(--w);
+      border-radius: 12px;
+      padding: 40px;
+      border: 1px solid rgba(231,209,166,0.4);
+      box-shadow: 0 4px 24px rgba(66,0,1,0.06);
+    }
+    .form-title {
+      font-size: 20px; font-weight: 800; color: var(--m);
+      margin-bottom: 6px;
+    }
+    .form-sub {
+      font-size: 11px; color: rgba(66,0,1,0.45); margin-bottom: 28px;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      color: var(--m); margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1.5px solid rgba(66,0,1,0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      color: var(--m);
+      background: var(--w);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23420001' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--m);
+      box-shadow: 0 0 0 3px rgba(66,0,1,0.07);
+    }
+    .form-group textarea { resize: vertical; }
+    .btn-submit {
+      width: 100%;
+      background: var(--m); color: var(--g);
+      border: none; border-radius: 8px;
+      padding: 14px;
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      cursor: pointer; font-family: 'Poppins', sans-serif;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { background: var(--ml); }
+    .form-success {
+      display: none;
+      background: rgba(26,138,26,0.08);
+      border: 1.5px solid rgba(26,138,26,0.25);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 13px; color: #1a5a1a;
+      font-weight: 600; margin-top: 16px;
+      text-align: center;
+    }
+
+    /* -- Info Cards --- */
+    .info-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-content: start;
+    }
+    .info-card {
+      background: var(--w);
+      border: 1px solid rgba(231,209,166,0.4);
+      border-radius: 12px;
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(66,0,1,0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .info-card:hover {
+      box-shadow: 0 6px 24px rgba(66,0,1,0.1);
+      transform: translateY(-2px);
+    }
+    .info-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(66,0,1,0.07);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .info-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--m); stroke-width: 1.7; }
+    .info-head {
+      font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+      color: var(--m); margin-bottom: 8px;
+    }
+    .info-line {
+      font-size: 12px; color: rgba(66,0,1,0.65);
+      line-height: 1.7;
+    }
+    .info-line a { color: rgba(66,0,1,0.65); transition: color 0.2s; }
+    .info-line a:hover { color: var(--m); }
+    .social-row { display: flex; gap: 8px; margin-top: 8px; }
+    .soc-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(66,0,1,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(66,0,1,0.55); transition: all 0.2s; cursor: pointer;
+    }
+    .soc-btn:hover { border-color: var(--m); color: var(--m); background: rgba(66,0,1,0.05); }
+    .soc-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+    /* -- FAQ --- */
+    .faq-sec {
+      padding: 72px 80px;
+      background: var(--w);
+    }
+    .sec-hdr-c { text-align: center; margin-bottom: 44px; }
+    .sec-eye {
+      font-size: 10px; font-weight: 700; letter-spacing: 3.5px;
+      color: rgba(66,0,1,0.35); margin-bottom: 10px;
+    }
+    .sec-title-c {
+      font-size: 30px; font-weight: 800; color: var(--m); line-height: 1.2;
+    }
+    .sec-title-c span { color: var(--gd); }
+    .sec-sub-c { font-size: 12px; color: rgba(66,0,1,0.45); margin-top: 6px; }
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid rgba(231,209,166,0.45);
+      overflow: hidden;
+    }
+    .faq-item:first-child { border-top: 1px solid rgba(231,209,166,0.45); }
+    .faq-q {
+      width: 100%; background: none; border: none;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 4px;
+      cursor: pointer; text-align: left;
+      font-size: 13px; font-weight: 700; color: var(--m);
+      font-family: 'Poppins', sans-serif;
+      gap: 16px;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--ml); }
+    .faq-arrow {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(66,0,1,0.06);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s, transform 0.3s;
+    }
+    .faq-arrow svg { width: 13px; height: 13px; stroke: var(--m); stroke-width: 2.2; fill: none; transition: transform 0.3s; }
+    .faq-item.open .faq-arrow { background: var(--m); }
+    .faq-item.open .faq-arrow svg { stroke: var(--g); transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.25s ease;
+      font-size: 13px; color: rgba(66,0,1,0.62); line-height: 1.75;
+      padding: 0 4px;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 4px 18px;
+    }
+
+    /* -- Map --- */
+    .map-sec {
+      padding: 72px 80px;
+      background: var(--bg);
+    }
+    .map-inner { max-width: 1100px; margin: 0 auto; }
+    .map-placeholder {
+      background: var(--m);
+      border-radius: 12px;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-placeholder::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(231,209,166,0.04) 0px, rgba(231,209,166,0.04) 1px, transparent 1px, transparent 40px),
+        repeating-linear-gradient(90deg, rgba(231,209,166,0.04) 0px, rgba(231,209,166,0.04) 1px, transparent 1px, transparent 40px);
+    }
+    .map-pin-wrap {
+      position: relative; z-index: 2;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(231,209,166,0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .map-pin-wrap svg { width: 26px; height: 26px; fill: none; stroke: var(--g); stroke-width: 1.8; }
+    .map-label {
+      position: relative; z-index: 2;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px; font-weight: 700; color: var(--g);
+    }
+    .map-addr {
+      position: relative; z-index: 2;
+      font-size: 11px; color: rgba(231,209,166,0.55);
+      letter-spacing: 0.5px;
+    }
+
+    /* -- Dark Footer (same as index.html) --- */
+    .dark-bottom { background: #2a0001; position: relative; overflow: hidden; }
+    .dark-nl {
+      padding: 80px 80px 64px; position: relative; z-index: 2;
+      text-align: center; border-bottom: 1px solid rgba(231,209,166,0.08);
+    }
+    .dark-brackets {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .dark-nl-eye { font-size: 10px; font-weight: 700; letter-spacing: 3.5px; color: rgba(231,209,166,0.4); margin-bottom: 18px; }
+    .dark-nl-h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 44px; font-weight: 700; color: var(--g);
+      line-height: 1.2; margin-bottom: 10px;
+    }
+    .dark-nl-h3 em { font-style: italic; color: var(--gd); }
+    .dark-nl-sub { font-size: 13px; color: rgba(231,209,166,0.45); margin-bottom: 34px; }
+    .dark-nl-form {
+      display: flex; max-width: 460px; margin: 0 auto;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(231,209,166,0.18);
+      border-radius: 100px; padding: 6px 6px 6px 22px; gap: 8px;
+    }
+    .dark-nl-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-size: 13px; color: var(--g); font-family: 'Poppins', sans-serif;
+    }
+    .dark-nl-input::placeholder { color: rgba(231,209,166,0.3); }
+    .dark-nl-btn {
+      background: var(--g); color: var(--m); border: none;
+      padding: 10px 22px; border-radius: 100px;
+      font-size: 10px; font-weight: 800; letter-spacing: 2px;
+      cursor: pointer; font-family: 'Poppins', sans-serif;
+      white-space: nowrap; transition: background 0.2s;
+    }
+    .dark-nl-btn:hover { background: var(--gd); }
+    .dark-footer { padding: 52px 80px 32px; position: relative; z-index: 2; }
+    .dark-footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .dark-footer-logo { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+    .dark-footer-logo-img { height: 44px; width: auto; object-fit: contain; display: block; filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(5deg) brightness(0.9); opacity: 0.9; }
+    .dark-footer-brand { font-size: 16px; font-weight: 800; color: var(--g); letter-spacing: 3px; }
+    .dark-footer-desc { font-size: 11px; color: rgba(231,209,166,0.42); line-height: 1.85; margin-bottom: 20px; }
+    .dark-footer-socials { display: flex; gap: 8px; }
+    .dark-soc {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(231,209,166,0.18);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(231,209,166,0.5); transition: all 0.2s; cursor: pointer;
+    }
+    .dark-soc:hover { border-color: var(--g); color: var(--g); }
+    .dark-foot-head { font-size: 10px; font-weight: 800; color: var(--g); letter-spacing: 2.5px; margin-bottom: 16px; }
+    .dark-foot-links { display: flex; flex-direction: column; gap: 10px; }
+    .dark-foot-links a { font-size: 11px; color: rgba(231,209,166,0.48); transition: color 0.2s; }
+    .dark-foot-links a:hover { color: var(--g); }
+    .dark-footer-bot {
+      border-top: 1px solid rgba(231,209,166,0.06); padding-top: 22px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .dark-foot-copy, .dark-foot-pay { font-size: 10px; color: rgba(231,209,166,0.26); }
+
+    /* -- WhatsApp Float --- */
+    .wa-float {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #25d366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(37,211,102,0.6); }
+    .wa-float svg { width: 28px; height: 28px; fill: #fff; }
+
+    /* -- Responsive --- */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .nav-outer { padding: 10px 32px; }
+      .contact-hero { padding: 64px 48px 56px; }
+      .hero-title { font-size: 44px; }
+      .contact-sec { padding: 56px 48px; }
+      .contact-grid { gap: 32px; }
+      .faq-sec { padding: 56px 48px; }
+      .map-sec { padding: 56px 48px; }
+      .dark-nl { padding: 64px 48px 48px; }
+      .dark-footer { padding: 48px 48px 28px; }
+      .dark-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 768px) {
+      .nav-outer { padding: 10px 16px; }
+      .nav { padding: 8px 8px 8px 16px; }
+      .nav-links { display: none; }
+      .contact-hero { padding: 48px 24px 40px; }
+      .hero-title { font-size: 36px; }
+      .contact-sec { padding: 32px 20px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 28px; }
+      .info-cards { grid-template-columns: 1fr; }
+      .form-wrap { padding: 28px 20px; }
+      .faq-sec { padding: 32px 20px; }
+      .map-sec { padding: 32px 20px; }
+      .map-placeholder { height: 200px; }
+      .dark-nl { padding: 48px 24px 40px; }
+      .dark-nl-h3 { font-size: 32px; }
+      .dark-footer { padding: 40px 24px 24px; }
+      .dark-footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+
+<!-- Hero -->
+<section class="contact-hero">
+  <div class="hero-eye">VAMAS &nbsp;&middot;&nbsp; JAIPUR</div>
+  <h1 class="hero-title">Get In Touch</h1>
+  <p class="hero-sub">We'd love to hear from you</p>
+</section>
+
+<!-- Contact Grid -->
+<section class="contact-sec">
+  <div class="contact-grid">
+
+    <!-- Form -->
+    <div class="form-wrap">
+      <div class="form-title">Send Us a Message</div>
+      <div class="form-sub">Fill in the form and we'll get back to you shortly.</div>
+      <form id="contactForm" novalidate>
+        <div class="form-group">
+          <label for="fname">FULL NAME</label>
+          <input type="text" id="fname" name="fname" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="femail">EMAIL ADDRESS</label>
+          <input type="email" id="femail" name="femail" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="fphone">PHONE NUMBER</label>
+          <input type="tel" id="fphone" name="fphone" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="form-group">
+          <label for="fsubject">SUBJECT</label>
+          <select id="fsubject" name="fsubject">
+            <option value="" disabled selected>Select a subject</option>
+            <option value="general">General Inquiry</option>
+            <option value="order">Order Issue</option>
+            <option value="custom">Custom Order</option>
+            <option value="wholesale">Wholesale</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fmessage">MESSAGE</label>
+          <textarea id="fmessage" name="fmessage" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">SEND MESSAGE</button>
+        <div class="form-success" id="formSuccess">Thank you! We'll get back to you within 24 hours.</div>
+      </form>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-cards">
+
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="info-head">OUR STUDIO</div>
+        <div class="info-line">123, Artisan Lane<br>Jaipur, Rajasthan 302001</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.38 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.13 6.13l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="info-head">CALL US</div>
+        <div class="info-line">
+          <a href="tel:+919876543210">+91 98765 43210</a><br>
+          Mon-Sat: 10am - 6pm
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="info-head">EMAIL US</div>
+        <div class="info-line">
+          <a href="mailto:support@vamas.in">support@vamas.in</a><br>
+          Response within 24 hours
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div class="info-head">FOLLOW US</div>
+        <div class="info-line">@vamas.official</div>
+        <div class="social-row">
+          <a href="#" class="soc-btn" title="Instagram">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="soc-btn" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://wa.me/919876543210" class="soc-btn" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec">
+  <div class="sec-hdr-c">
+    <div class="sec-eye">GOT QUESTIONS?</div>
+    <div class="sec-title-c">Frequently Asked <span>Questions</span></div>
+    <div class="sec-sub-c">Quick answers to what our customers ask most</div>
+  </div>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q">
+        How long does delivery take?
+        <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a">We deliver pan-India within 3-5 business days. For remote areas, delivery may take 7-10 business days. You'll receive a tracking link via SMS and email once your order is dispatched.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">
+        Do you offer custom sizing?
+        <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a">Yes! We offer custom sizing at no extra charge. Simply share your measurements in the order notes at checkout and our tailors will craft your blouse to your exact fit.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">
+        What is your return policy?
+        <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a">We offer 7-day hassle-free returns on all unworn items in original condition with tags intact. Simply initiate a return from your order page or contact our support team and we'll arrange a free pickup.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">
+        How can I track my order?
+        <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a">Once your order is dispatched, a tracking link will be sent to your registered mobile number via SMS and to your email address. You can also track your order from the "My Orders" section on our website.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">
+        Do you offer wholesale?
+        <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a">Yes, we offer wholesale pricing for orders above 50 pieces. Please write to us at <a href="mailto:wholesale@vamas.in" style="color:var(--m);font-weight:600;">wholesale@vamas.in</a> with your requirements and we'll get back to you with our bulk pricing catalog.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Map Placeholder -->
+<section class="map-sec">
+  <div class="map-inner">
+    <div class="map-placeholder">
+      <div class="map-pin-wrap">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="map-label">Find Us</div>
+      <div class="map-addr">123, Artisan Lane, Jaipur, Rajasthan 302001</div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="includes.js"></script>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/919876543210" class="wa-float" title="Chat on WhatsApp" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+(function(){
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var item = btn.closest('.faq-item');
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+      if(!isOpen){ item.classList.add('open'); }
+    });
+  });
+
+  // Contact form submit
+  var form = document.getElementById('contactForm');
+  var success = document.getElementById('formSuccess');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = form.fname.value.trim();
+    var email = form.femail.value.trim();
+    var msg = form.fmessage.value.trim();
+    if(!name || !email || !msg){ return; }
+    success.style.display = 'block';
+    form.reset();
+    setTimeout(function(){ success.style.display = 'none'; }, 5000);
+  });
+})();
+</script>
+</body>
+</html>

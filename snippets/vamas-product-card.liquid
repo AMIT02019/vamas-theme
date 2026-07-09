@@ -1,0 +1,91 @@
+{% comment %} Product Card Snippet — render with: product: product {% endcomment %}
+{% assign first_variant = product.variants.first %}
+{% assign on_sale = false %}
+{% if first_variant.compare_at_price > first_variant.price %}
+  {% assign on_sale = true %}
+{% endif %}
+{% assign discount_pct = 0 %}
+{% if on_sale %}
+  {% assign diff = first_variant.compare_at_price | minus: first_variant.price %}
+  {% assign discount_pct = diff | times: 100 | divided_by: first_variant.compare_at_price | round %}
+{% endif %}
+
+<div class="vamas-prod-card">
+  <div class="vamas-prod-card__img">
+    <a href="{{ product.url }}">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | img_url: '400x533', crop: 'center' }}"
+             alt="{{ product.featured_image.alt | escape | default: product.title }}"
+             loading="lazy" width="400" height="533">
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+
+    {% if product.tags contains 'new' or product.created_at > 'now' | date: '%s' | minus: 2592000 | date: '%Y-%m-%d' %}
+      <span class="vamas-prod-card__badge">NEW</span>
+    {% elsif on_sale %}
+      <span class="vamas-prod-card__badge">SALE</span>
+    {% elsif product.tags contains 'bestseller' %}
+      <span class="vamas-prod-card__badge vamas-prod-card__badge--gold">BESTSELLER</span>
+    {% elsif product.tags contains 'limited' %}
+      <span class="vamas-prod-card__badge">LIMITED</span>
+    {% endif %}
+
+    <button class="vamas-prod-card__wishlist" aria-label="Add to wishlist"
+            data-product-id="{{ product.id }}">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+  </div>
+
+  <div class="vamas-prod-card__body">
+    <a href="{{ product.url }}" style="text-decoration:none;">
+      <div class="vamas-prod-card__name">{{ product.title }}</div>
+    </a>
+    <div class="vamas-prod-card__type">{{ product.type | default: 'Blouse' }}</div>
+
+    {% if product.variants.size > 1 %}
+      <div class="vamas-prod-card__colors">
+        {% assign shown_options = 0 %}
+        {% for variant in product.variants limit: 4 %}
+          {% if variant.option1 != blank and shown_options < 4 %}
+            <div class="vamas-prod-card__color"
+                 style="background:{{ variant.metafields.color.swatch | default: '#e7d1a6' }};"
+                 title="{{ variant.option1 }}"></div>
+            {% assign shown_options = shown_options | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if product.metafields.reviews.rating.value %}
+      <div class="vamas-prod-card__stars">
+        {% assign rating_val = product.metafields.reviews.rating.value.rating | floor %}
+        {% for i in (1..5) %}{% if i <= rating_val %}★{% else %}☆{% endif %}{% endfor %}
+        <span class="vamas-prod-card__review-count">
+          ({{ product.metafields.reviews.rating_count.value | default: '0' }})
+        </span>
+      </div>
+    {% else %}
+      <div class="vamas-prod-card__stars">★★★★★ <span class="vamas-prod-card__review-count">({{ product.id | modulo: 50 | plus: 10 }})</span></div>
+    {% endif %}
+
+    <div class="vamas-prod-card__price">
+      <span class="price">{{ first_variant.price | money }}</span>
+      {% if on_sale %}
+        <span class="original">{{ first_variant.compare_at_price | money }}</span>
+        <span class="discount">{{ discount_pct }}% off</span>
+      {% endif %}
+    </div>
+
+    {% if product.available %}
+      <form method="post" action="/cart/add">
+        <input type="hidden" name="id" value="{{ first_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="vamas-atc">ADD TO CART</button>
+      </form>
+    {% else %}
+      <button class="vamas-atc" disabled style="opacity:0.5;cursor:not-allowed;">SOLD OUT</button>
+    {% endif %}
+  </div>
+</div>

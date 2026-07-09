@@ -1,0 +1,242 @@
+{{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
+
+{% comment %} ── Hero ─────────────────────────────── {% endcomment %}
+<section class="vamas-about-hero">
+  <p class="vamas-about-hero__eyebrow">{{ section.settings.hero_eyebrow }}</p>
+  <h1 class="vamas-about-hero__heading">{{ section.settings.hero_heading }}</h1>
+  {% if section.settings.hero_subtext != blank %}
+    <p class="vamas-about-hero__sub">{{ section.settings.hero_subtext }}</p>
+  {% endif %}
+  <div class="vamas-about-hero__line"></div>
+</section>
+
+{% comment %} ── Brand Story ──────────────────────── {% endcomment %}
+<section class="vamas-about-story">
+  <div class="vamas-about-story__text">
+    <p class="vamas-about-story__eyebrow">{{ section.settings.story_eyebrow }}</p>
+    <h2 class="vamas-about-story__heading">{{ section.settings.story_heading }}</h2>
+    {% if section.settings.story_p1 != blank %}<p class="vamas-about-story__p">{{ section.settings.story_p1 }}</p>{% endif %}
+    {% if section.settings.story_p2 != blank %}<p class="vamas-about-story__p">{{ section.settings.story_p2 }}</p>{% endif %}
+    {% if section.settings.story_p3 != blank %}<p class="vamas-about-story__p">{{ section.settings.story_p3 }}</p>{% endif %}
+  </div>
+  <div class="vamas-about-story__image-wrap">
+    {% if section.settings.story_image != blank %}
+      <img src="{{ section.settings.story_image | img_url: '480x520', crop: 'center' }}"
+           alt="{{ section.settings.story_image.alt | escape | default: 'Vamas handcrafted blouse' }}"
+           class="vamas-about-story__image" loading="lazy" width="480" height="520">
+    {% else %}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg vamas-about-story__image' }}
+    {% endif %}
+  </div>
+</section>
+
+{% comment %} ── Stats Bar ────────────────────────── {% endcomment %}
+{% assign stat_blocks = section.blocks | where: 'type', 'stat' %}
+{% if stat_blocks.size > 0 %}
+<div class="vamas-about-stats">
+  {% for block in section.blocks %}
+    {% if block.type == 'stat' %}
+      <div class="vamas-about-stats__item" {{ block.shopify_attributes }}>
+        <div class="vamas-about-stats__num">{{ block.settings.stat_num }}</div>
+        <div class="vamas-about-stats__label">{{ block.settings.stat_label }}</div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+{% comment %} ── Our Values ───────────────────────── {% endcomment %}
+{% assign value_blocks = section.blocks | where: 'type', 'value' %}
+{% if value_blocks.size > 0 %}
+<section class="vamas-about-values">
+  <p class="vamas-about__eyebrow">{{ section.settings.values_eyebrow }}</p>
+  <h2 class="vamas-about__heading">{{ section.settings.values_heading }}</h2>
+  {% if section.settings.values_subtext != blank %}
+    <p class="vamas-about__subtext">{{ section.settings.values_subtext }}</p>
+  {% endif %}
+  <div class="vamas-about-values__grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'value' %}
+        <div class="vamas-about-value-card" {{ block.shopify_attributes }}>
+          <div class="vamas-about-value-card__icon">
+            {% case block.settings.icon %}
+              {% when 'sustainability' %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e7d1a6" stroke-width="1.8">
+                  <path d="M2 22l10-10m0 0l4-4m-4 4L6 6m6 6l4 4m0-14s4 0 4 4-4 4-4 4"/>
+                  <circle cx="12" cy="7" r="3"/>
+                  <path d="M20 14s-2 4-8 4-8-4-8-4"/>
+                </svg>
+              {% when 'authenticity' %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e7d1a6" stroke-width="1.8">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              {% else %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e7d1a6" stroke-width="1.8">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            {% endcase %}
+          </div>
+          <div class="vamas-about-value-card__title">{{ block.settings.title }}</div>
+          <div class="vamas-about-value-card__desc">{{ block.settings.desc }}</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Meet Our Team ────────────────────── {% endcomment %}
+{% assign team_blocks = section.blocks | where: 'type', 'team_member' %}
+{% if team_blocks.size > 0 %}
+<section class="vamas-about-team">
+  <p class="vamas-about__eyebrow">{{ section.settings.team_eyebrow }}</p>
+  <h2 class="vamas-about__heading">{{ section.settings.team_heading }}</h2>
+  {% if section.settings.team_subtext != blank %}
+    <p class="vamas-about__subtext">{{ section.settings.team_subtext }}</p>
+  {% endif %}
+  <div class="vamas-about-team__grid">
+    {% for block in section.blocks %}
+      {% if block.type == 'team_member' %}
+        <div class="vamas-about-team-card" {{ block.shopify_attributes }}>
+          <div class="vamas-about-team-card__avatar">{{ block.settings.initials }}</div>
+          <div class="vamas-about-team-card__name">{{ block.settings.name }}</div>
+          <div class="vamas-about-team-card__role">{{ block.settings.role }}</div>
+          <div class="vamas-about-team-card__bio">{{ block.settings.bio }}</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% comment %} ── Timeline / Journey ───────────────── {% endcomment %}
+{% assign milestone_blocks = section.blocks | where: 'type', 'milestone' %}
+{% if milestone_blocks.size > 0 %}
+<section class="vamas-about-timeline">
+  <div class="vamas-about-timeline__header">
+    <p class="vamas-about__eyebrow vamas-about__eyebrow--on-dark">{{ section.settings.timeline_eyebrow }}</p>
+    <h2 class="vamas-about__heading vamas-about__heading--on-dark">{{ section.settings.timeline_heading }}</h2>
+    {% if section.settings.timeline_subtext != blank %}
+      <p class="vamas-about__subtext vamas-about__subtext--on-dark">{{ section.settings.timeline_subtext }}</p>
+    {% endif %}
+  </div>
+  <div class="vamas-about-timeline__track">
+    {% assign ms_index = 0 %}
+    {% for block in section.blocks %}
+      {% if block.type == 'milestone' %}
+        {% assign ms_index = ms_index | plus: 1 %}
+        <div class="vamas-about-tl-item {% if ms_index | modulo: 2 == 0 %}vamas-about-tl-item--right{% endif %}" {{ block.shopify_attributes }}>
+          {% if ms_index | modulo: 2 == 0 %}<div class="vamas-about-tl-item__spacer"></div>{% endif %}
+          {% if ms_index | modulo: 2 == 0 %}<div class="vamas-about-tl-item__dot"></div>{% endif %}
+          <div class="vamas-about-tl-item__content">
+            <div class="vamas-about-tl-item__year">{{ block.settings.year }}</div>
+            <div class="vamas-about-tl-item__desc">{{ block.settings.description }}</div>
+          </div>
+          {% if ms_index | modulo: 2 != 0 %}<div class="vamas-about-tl-item__dot"></div>{% endif %}
+          {% if ms_index | modulo: 2 != 0 %}<div class="vamas-about-tl-item__spacer"></div>{% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Vamas About",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_eyebrow", "label": "Eyebrow Text", "default": "WHO WE ARE" },
+    { "type": "text", "id": "hero_heading", "label": "Heading", "default": "Our Story" },
+    { "type": "textarea", "id": "hero_subtext", "label": "Subtext", "default": "Born from a love of Indian craftsmanship, woven with tradition, worn with pride." },
+
+    { "type": "header", "content": "Brand Story" },
+    { "type": "text", "id": "story_eyebrow", "label": "Eyebrow Text", "default": "THE VAMAS STORY" },
+    { "type": "textarea", "id": "story_heading", "label": "Heading", "info": "Use <br> for a line break and <em>text</em> to italicize.", "default": "Every blouse tells<br><em>a story.</em>" },
+    { "type": "textarea", "id": "story_p1", "label": "Paragraph 1", "default": "Founded with a deep love for Indian craftsmanship, Vamas was born from a simple belief — every woman deserves a blouse that tells her story. We work directly with skilled karigars across India to bring you heirloom-quality pieces at honest prices." },
+    { "type": "textarea", "id": "story_p2", "label": "Paragraph 2", "default": "Our name, Vamas, is rooted in the Sanskrit tradition — it means “beautiful” and “belonging to the left side,” a sacred direction in Indian culture. Each stitch we make is a tribute to the artisans whose hands carry centuries of knowledge." },
+    { "type": "textarea", "id": "story_p3", "label": "Paragraph 3", "default": "From the looms of Varanasi to the block-print studios of Jaipur, every Vamas blouse is a journey across India’s rich textile heritage." },
+    { "type": "image_picker", "id": "story_image", "label": "Story Image" },
+
+    { "type": "header", "content": "Our Values" },
+    { "type": "text", "id": "values_eyebrow", "label": "Eyebrow Text", "default": "WHAT WE STAND FOR" },
+    { "type": "text", "id": "values_heading", "label": "Heading", "default": "Our Values" },
+    { "type": "textarea", "id": "values_subtext", "label": "Subtext", "default": "Three principles guide everything we create, from the studio to your wardrobe." },
+
+    { "type": "header", "content": "Meet Our Team" },
+    { "type": "text", "id": "team_eyebrow", "label": "Eyebrow Text", "default": "THE PEOPLE BEHIND VAMAS" },
+    { "type": "text", "id": "team_heading", "label": "Heading", "default": "Meet Our Team" },
+    { "type": "textarea", "id": "team_subtext", "label": "Subtext", "default": "Passionate individuals united by a love for Indian textiles and a mission to celebrate our artisans." },
+
+    { "type": "header", "content": "Timeline / Journey" },
+    { "type": "text", "id": "timeline_eyebrow", "label": "Eyebrow Text", "default": "OUR JOURNEY" },
+    { "type": "textarea", "id": "timeline_heading", "label": "Heading", "info": "Use <br> for a line break.", "default": "Milestones That<br>Define Us" },
+    { "type": "textarea", "id": "timeline_subtext", "label": "Subtext", "default": "From a small Jaipur studio to India’s trusted blouse brand — here is how we grew." }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        { "type": "text", "id": "stat_num", "label": "Number", "default": "500+" },
+        { "type": "text", "id": "stat_label", "label": "Label", "default": "DESIGNS" }
+      ]
+    },
+    {
+      "type": "value",
+      "name": "Value Card",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+            { "value": "craftsmanship", "label": "Star" },
+            { "value": "sustainability", "label": "Sustainability" },
+            { "value": "authenticity", "label": "House" }
+          ], "default": "craftsmanship" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Craftsmanship" },
+        { "type": "textarea", "id": "desc", "label": "Description", "default": "Every piece is handmade with care by master karigars. No shortcuts, no compromises — only the finest finishing that stands the test of time." }
+      ]
+    },
+    {
+      "type": "team_member",
+      "name": "Team Member",
+      "settings": [
+        { "type": "text", "id": "initials", "label": "Avatar Initials", "default": "MS" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Meera Sharma" },
+        { "type": "text", "id": "role", "label": "Role", "default": "Founder" },
+        { "type": "textarea", "id": "bio", "label": "Bio", "default": "Visionary behind Vamas, passionate about preserving Indian textile heritage." }
+      ]
+    },
+    {
+      "type": "milestone",
+      "name": "Timeline Milestone",
+      "settings": [
+        { "type": "text", "id": "year", "label": "Year", "default": "2018" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "Founded in Jaipur with just 10 designs and a single karigar workshop." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas About",
+      "blocks": [
+        { "type": "stat", "settings": { "stat_num": "10,000+", "stat_label": "Happy Customers" } },
+        { "type": "stat", "settings": { "stat_num": "500+", "stat_label": "Designs" } },
+        { "type": "stat", "settings": { "stat_num": "15+", "stat_label": "States" } },
+        { "type": "stat", "settings": { "stat_num": "4.9 ★", "stat_label": "Rating" } },
+        { "type": "value", "settings": { "icon": "craftsmanship", "title": "Craftsmanship", "desc": "Every piece is handmade with care by master karigars. No shortcuts, no compromises — only the finest finishing that stands the test of time." } },
+        { "type": "value", "settings": { "icon": "sustainability", "title": "Sustainability", "desc": "We source fabrics ethically, support fair-trade practices, and ensure every artisan in our network earns a dignified livelihood." } },
+        { "type": "value", "settings": { "icon": "authenticity", "title": "Authenticity", "desc": "We source directly from artisan communities, preserving traditional techniques and ensuring every design is genuinely handcrafted in India." } },
+        { "type": "team_member", "settings": { "initials": "MS", "name": "Meera Sharma", "role": "Founder", "bio": "Visionary behind Vamas, passionate about preserving Indian textile heritage. Meera started the brand after a decade of working with karigars across Rajasthan and UP." } },
+        { "type": "team_member", "settings": { "initials": "PN", "name": "Priya Nair", "role": "Head Designer", "bio": "Brings 12 years of design expertise to every collection. Priya blends contemporary aesthetics with classical motifs, creating pieces that are timeless yet modern." } },
+        { "type": "team_member", "settings": { "initials": "RK", "name": "Ramesh Kumar", "role": "Master Artisan", "bio": "Trained in traditional embroidery techniques from Varanasi, Ramesh leads our karigar network and ensures every piece meets Vamas' signature quality standard." } },
+        { "type": "milestone", "settings": { "year": "2018", "description": "Founded in Jaipur with just 10 designs and a single karigar workshop. The first collection sold out in 3 weeks." } },
+        { "type": "milestone", "settings": { "year": "2020", "description": "Expanded to 200+ designs and launched our online store, bringing handcrafted blouses to customers across India." } },
+        { "type": "milestone", "settings": { "year": "2022", "description": "Crossed 5,000 happy customers and partnered with artisan clusters in Varanasi, Lucknow, and Bhopal." } },
+        { "type": "milestone", "settings": { "year": "2024", "description": "Featured in Vogue India’s “Brands Celebrating Indian Craft” spotlight. A proud moment for our entire karigar community." } },
+        { "type": "milestone", "settings": { "year": "2026", "description": "10,000+ customers, 500+ designs, and shipping to 15+ states. The journey continues — one blouse at a time." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{{ page_title }}</title>
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="icon" type="image/png" href="{{ 'vamas-logo.avif' | asset_url }}">
+
+  {% comment %} ── Fonts: Poppins (body) + Playfair Display (headings) ── {% endcomment %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  {{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
+
+  {% comment %} ── Theme color settings override the stylesheet defaults ── {% endcomment %}
+  <style>
+    :root {
+      --color-maroon: {{ settings.color_maroon }};
+      --color-maroon-light: {{ settings.color_maroon_light }};
+      --color-gold: {{ settings.color_gold }};
+      --color-gold-dark: {{ settings.color_gold_dark }};
+      --color-bg: {{ settings.color_bg }};
+      --color-white: {{ settings.color_white }};
+    }
+  </style>
+
+  {% comment %} ── WhatsApp floating widget config, read by theme.js ── {% endcomment %}
+  <script>
+    window.vamasWhatsappNumber = {{ settings.whatsapp_number | json }};
+    window.vamasWhatsappMessage = {{ settings.whatsapp_message | json }};
+    window.vamasMoneyFormat = {{ shop.money_format | json }};
+  </script>
+</head>
+<body>
+
+  {% section 'vamas-header' %}
+
+  <main id="vamas-main-content">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'vamas-footer' %}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+</body>
+</html>
