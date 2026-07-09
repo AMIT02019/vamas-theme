@@ -1,8 +1,0 @@
-{
-  "sections": {
-    "not-found": {
-      "type": "vamas-404"
-    }
-  },
-  "order": ["not-found"]
-}
