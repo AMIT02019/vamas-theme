@@ -1,57 +1,38 @@
-{{ 'vamas-theme.css' | asset_url | stylesheet_tag }}
-
-{% comment %} ── Announcement Bar ─────────────────── {% endcomment %}
 {% if section.settings.show_announce %}
-<div class="vamas-announce">{{ section.settings.announce_text }}</div>
+<div class="ann">{{ section.settings.announce_text }}</div>
 {% endif %}
 
-{% comment %} ── Nav ──────────────────────────────── {% endcomment %}
-<div class="vamas-nav-outer">
-  <nav class="vamas-nav">
-    <div class="vamas-nav__logo">
-      <a href="{{ routes.root_url }}">
-        {% if section.settings.logo_image != blank %}
-          <img src="{{ section.settings.logo_image | img_url: '300x' }}"
-               alt="{{ section.settings.logo_image.alt | escape | default: shop.name }}"
-               class="vamas-nav__logo-img" width="150" height="42">
-        {% else %}
-          <img src="{{ 'vamas-logo.avif' | asset_url }}" alt="{{ shop.name }}"
-               class="vamas-nav__logo-img" width="150" height="42">
-        {% endif %}
-      </a>
-    </div>
-
-    <div class="vamas-nav__links">
-      {% for link in section.settings.main_menu.links %}
-        <a href="{{ link.url }}"{% if link.active %} class="active"{% endif %}>{{ link.title }}</a>
-      {% endfor %}
-    </div>
-
-    <div class="vamas-nav__icons">
-      <a href="{{ routes.search_url }}" class="vamas-nav__icon" title="Search">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </a>
-      <a href="#" class="vamas-nav__icon vamas-wishlist-icon" title="Wishlist" data-wishlist-toggle>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </a>
-      <a href="{{ routes.cart_url }}" class="vamas-nav__icon" title="Cart" style="position:relative;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="vamas-cart-badge" data-cart-count="{{ cart.item_count }}">{{ cart.item_count }}</span>
-      </a>
-      <a href="{{ section.settings.contact_btn_url }}" class="vamas-nav-contact">{{ section.settings.contact_btn_text }}</a>
-      <button class="vamas-nav-hamburger" id="vamas-nav-hamburger" aria-label="Menu" aria-expanded="false" aria-controls="vamas-mobile-menu">
-        <span></span><span></span><span></span>
-      </button>
+<div class="nav-wrapper" id="nav-wrapper">
+  <nav class="nav-outer">
+    <div class="nav">
+      <div class="nav-logo">
+        <a href="{{ routes.root_url }}">
+          {% if section.settings.logo_image != blank %}
+            <img src="{{ section.settings.logo_image | img_url: 'master' }}" alt="{{ shop.name }}" class="nav-logo-img">
+          {% else %}
+            <img src="{{ 'vamas-logo.avif' | asset_url }}" alt="Vamas" class="nav-logo-img" onerror="this.style.display='none'">
+          {% endif %}
+        </a>
+      </div>
+      <div class="nav-links">
+        {% for link in section.settings.main_menu.links %}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </div>
+      <div class="nav-icons">
+        <a href="{{ routes.search_url }}" title="Search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></a>
+        <a href="#" title="Wishlist"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></a>
+        <a href="{{ routes.cart_url }}" id="nav-cart-link" title="Cart" style="position:relative;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" id="nav-cart-badge" style="display:none;">{{ cart.item_count }}</span></a>
+        <a href="{{ section.settings.contact_btn_url }}" class="nav-contact">{{ section.settings.contact_btn_text }}</a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
     </div>
   </nav>
-</div>
-
-{% comment %} ── Mobile Slide-down Menu ───────────── {% endcomment %}
-<div class="vamas-mobile-menu" id="vamas-mobile-menu">
-  {% for link in section.settings.main_menu.links %}
-    <a href="{{ link.url }}">{{ link.title }}</a>
-  {% endfor %}
-  <a href="{{ section.settings.contact_btn_url }}" class="vamas-mobile-menu__contact">{{ section.settings.contact_btn_text }}</a>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    {% for link in section.settings.main_menu.links %}
+      <a href="{{ link.url }}">{{ link.title }}</a>
+    {% endfor %}
+  </div>
 </div>
 
 {% schema %}
