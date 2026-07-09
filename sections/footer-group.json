@@ -1,0 +1,11 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "vamas-footer",
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}

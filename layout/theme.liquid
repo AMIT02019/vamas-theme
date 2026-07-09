@@ -40,13 +40,13 @@
 </head>
 <body>
 
-  {% section 'vamas-header' %}
+  {% sections 'header-group' %}
 
   <main id="vamas-main-content">
     {{ content_for_layout }}
   </main>
 
-  {% section 'vamas-footer' %}
+  {% sections 'footer-group' %}
 
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
 </body>
