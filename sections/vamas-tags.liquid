@@ -1,0 +1,46 @@
+<div class="tags">
+  {% for block in section.blocks %}
+    <span class="tag" {{ block.shopify_attributes }}>{{ block.settings.tag_text }}</span>
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Vamas Tags",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "tag",
+      "name": "Tag",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tag_text",
+          "label": "Tag Text",
+          "default": "NEW TAG"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Tags",
+      "blocks": [
+        { "type": "tag", "settings": { "tag_text": "ZARI WORK" } },
+        { "type": "tag", "settings": { "tag_text": "MIRROR WORK" } },
+        { "type": "tag", "settings": { "tag_text": "EMBROIDERY" } },
+        { "type": "tag", "settings": { "tag_text": "VELVET" } },
+        { "type": "tag", "settings": { "tag_text": "PRINTED" } },
+        { "type": "tag", "settings": { "tag_text": "BRIDAL" } },
+        { "type": "tag", "settings": { "tag_text": "BACKLESS" } },
+        { "type": "tag", "settings": { "tag_text": "COTTON" } },
+        { "type": "tag", "settings": { "tag_text": "PURE SILK" } },
+        { "type": "tag", "settings": { "tag_text": "CHIKANKARI" } },
+        { "type": "tag", "settings": { "tag_text": "PHULKARI" } },
+        { "type": "tag", "settings": { "tag_text": "GOTA PATTI" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

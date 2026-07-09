@@ -19,10 +19,13 @@
           {% if block.settings.slide_image != blank %}
             <img src="{{ block.settings.slide_image | img_url: 'master' }}" alt="{{ block.settings.line1 }}">
           {% else %}
-            {% assign fallback_idx = forloop.index | modulo: 2 %}
-            {% if fallback_idx == 0 %}{% assign fallback_idx = 2 %}{% endif %}
-            {% assign fallback_hero = 'hero-' | append: fallback_idx | append: '.webp' %}
-            <img src="{{ fallback_hero | asset_url }}" alt="{{ block.settings.line1 }}">
+            {% if forloop.index == 1 %}
+              <img src="{{ 'slide-pink.jpg' | asset_url }}" alt="{{ block.settings.line1 }}">
+            {% elsif forloop.index == 2 %}
+              <img src="{{ 'slide-maroon.jpg' | asset_url }}" alt="{{ block.settings.line1 }}">
+            {% else %}
+              <img src="{{ 'slide-green.jpg' | asset_url }}" alt="{{ block.settings.line1 }}">
+            {% endif %}
           {% endif %}
         </div>
       </div>
@@ -76,9 +79,15 @@
         {% if block.settings.cat_image != blank %}
           <img src="{{ block.settings.cat_image | img_url: '400x533', crop: 'center' }}" alt="{{ block.settings.cat_name }}">
         {% else %}
-          {% assign cat_handle = block.settings.cat_name | downcase | replace: ' ', '-' %}
-          {% assign fallback_cat = 'cat-' | append: cat_handle | append: '.webp' %}
-          <img src="{{ fallback_cat | asset_url }}" alt="{{ block.settings.cat_name }}">
+          {% if block.settings.cat_name == 'BRIDAL' %}
+            <img src="{{ 'Bridal.jpg' | asset_url }}" alt="{{ block.settings.cat_name }}">
+          {% elsif block.settings.cat_name == 'FESTIVE' %}
+            <img src="{{ 'Festive.jpg' | asset_url }}" alt="{{ block.settings.cat_name }}">
+          {% elsif block.settings.cat_name == 'CASUAL' %}
+            <img src="{{ 'Casual.JPG' | asset_url }}" alt="{{ block.settings.cat_name }}">
+          {% else %}
+            <img src="{{ 'party wear.jpg' | asset_url }}" alt="{{ block.settings.cat_name }}">
+          {% endif %}
         {% endif %}
         <div class="cat-overlay"><div><div class="cat-label">{{ block.settings.cat_name }}</div><div class="cat-count">{{ block.settings.cat_count }}</div></div></div>
       </a>
@@ -145,7 +154,7 @@
     {% for product in bs_col.products limit: 3 %}
       {% render 'vamas-product-card', product: product %}
     {% else %}
-      {% for i in (1..3) %}{% render 'vamas-product-card-placeholder', index: i %}{% endfor %}
+      {% for i in (4..6) %}{% render 'vamas-product-card-placeholder', index: i %}{% endfor %}
     {% endfor %}
   </div>
 </div>

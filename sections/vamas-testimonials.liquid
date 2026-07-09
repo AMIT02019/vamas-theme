@@ -1,0 +1,108 @@
+<div class="sec sec-alt">
+  <div class="sec-hdr">
+    <div>
+      <div class="sec-title">{{ section.settings.heading | replace: 'Reviews', '<span>Reviews</span>' }}</div>
+      <div class="sec-sub">{{ section.settings.subheading }}</div>
+    </div>
+  </div>
+  <div class="test-grid">
+    {% for block in section.blocks %}
+      <div class="test-card" {{ block.shopify_attributes }}>
+        <div class="test-stars">
+          {% for i in (1..5) %}
+            {% if i <= block.settings.rating %}&#9733;{% else %}&#9734;{% endif %}
+          {% endfor %}
+        </div>
+        <p class="test-text">"{{ block.settings.review_text }}"</p>
+        <div class="test-auth">
+          <div class="ava">{{ block.settings.reviewer_name | slice: 0, 1 }}</div>
+          <div>
+            <div class="ava-name">{{ block.settings.reviewer_name }}</div>
+            <div class="ava-info">{{ block.settings.reviewer_info }}</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Vamas Testimonials",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Over 10,000 happy customers"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "Absolutely gorgeous blouse! The zari work is stunning."
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer Name",
+          "default": "Priya Sharma"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_info",
+          "label": "Reviewer Info",
+          "default": "Verified Buyer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vamas Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "review_text": "Absolutely gorgeous blouse! The zari work is stunning and stitching quality is perfect. Got so many compliments at the wedding. Will definitely buy again!",
+            "reviewer_name": "Priya Sharma",
+            "reviewer_info": "Verified Buyer · Silk Zari Blouse"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "review_text": "Fast delivery and beautiful packaging. The fabric quality is exactly as shown. My order arrived in 3 days and the blouse fit perfectly. Love Vamas!",
+            "reviewer_name": "Anita Menon",
+            "reviewer_info": "Verified Buyer · Kanjeevaram Blouse"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
