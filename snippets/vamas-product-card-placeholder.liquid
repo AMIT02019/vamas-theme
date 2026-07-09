@@ -5,10 +5,16 @@
 {% assign og_prices = '1999,2199,1799,2999,1499,1899' | split: ',' %}
 {% assign i0 = index | minus: 1 %}
 
+{% assign img_idx = index | modulo: 4 %}
+{% if img_idx == 1 %}{% assign fallback_img = 'prod-cobalt.jpg' %}
+{% elsif img_idx == 2 %}{% assign fallback_img = 'prod-green2.jpg' %}
+{% elsif img_idx == 3 %}{% assign fallback_img = 'prod-maroon2.jpg' %}
+{% else %}{% assign fallback_img = 'prod-darkmaroon.jpg' %}{% endif %}
+
 <div class="vamas-prod-card">
   <div class="vamas-prod-card__img">
     <a href="/collections/all">
-      {{ 'product-' | append: index | placeholder_svg_tag: 'placeholder-svg' }}
+      <img src="{{ fallback_img | asset_url }}" alt="{{ names[i0] }}">
     </a>
     <span class="vamas-prod-card__badge">NEW</span>
     <button class="vamas-prod-card__wishlist" aria-label="Add to wishlist">

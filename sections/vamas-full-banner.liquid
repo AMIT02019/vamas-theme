@@ -5,7 +5,9 @@
          alt="{{ section.settings.banner_image.alt | escape | default: section.settings.heading | strip_html }}"
          loading="lazy" width="1600" height="560">
   {% else %}
-    {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+    <img src="{{ 'fulllook.webp' | asset_url }}"
+         alt="{{ section.settings.heading | strip_html }}"
+         loading="lazy" width="1600" height="560">
   {% endif %}
 
   {% if section.settings.heading != blank or section.settings.subtext != blank %}

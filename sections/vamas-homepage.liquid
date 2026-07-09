@@ -19,7 +19,10 @@
           {% if block.settings.slide_image != blank %}
             <img src="{{ block.settings.slide_image | img_url: 'master' }}" alt="{{ block.settings.line1 }}">
           {% else %}
-            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% assign fallback_idx = forloop.index | modulo: 2 %}
+            {% if fallback_idx == 0 %}{% assign fallback_idx = 2 %}{% endif %}
+            {% assign fallback_hero = 'hero-' | append: fallback_idx | append: '.webp' %}
+            <img src="{{ fallback_hero | asset_url }}" alt="{{ block.settings.line1 }}">
           {% endif %}
         </div>
       </div>
@@ -73,7 +76,9 @@
         {% if block.settings.cat_image != blank %}
           <img src="{{ block.settings.cat_image | img_url: '400x533', crop: 'center' }}" alt="{{ block.settings.cat_name }}">
         {% else %}
-          {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% assign cat_handle = block.settings.cat_name | downcase | replace: ' ', '-' %}
+          {% assign fallback_cat = 'cat-' | append: cat_handle | append: '.webp' %}
+          <img src="{{ fallback_cat | asset_url }}" alt="{{ block.settings.cat_name }}">
         {% endif %}
         <div class="cat-overlay"><div><div class="cat-label">{{ block.settings.cat_name }}</div><div class="cat-count">{{ block.settings.cat_count }}</div></div></div>
       </a>

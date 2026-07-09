@@ -25,9 +25,36 @@
             "review_text": "Fast delivery and beautiful packaging. The fabric quality is exactly as shown. Will definitely order again from Vamas!",
             "reviewer_name": "Anita Menon"
           }
+          }
+        },
+        "slide-1": {
+          "type": "slide",
+          "settings": {
+            "slide_bg": "#420001",
+            "eyebrow": "NEW COLLECTION 2026",
+            "line1": "Craft Your",
+            "line2_accent": "Perfect",
+            "line3": "Silhouette",
+            "subtext": "Handcrafted blouses that celebrate every occasion with elegance & grace.",
+            "btn1_text": "SHOP NOW",
+            "btn2_text": "VIEW LOOKBOOK"
+          }
+        },
+        "slide-2": {
+          "type": "slide",
+          "settings": {
+            "slide_bg": "#102319",
+            "eyebrow": "THE VELVET EDIT",
+            "line1": "Regal",
+            "line2_accent": "Winter",
+            "line3": "Classics",
+            "subtext": "Rich velvet fabrics adorned with intricate zardozi and gota patti work.",
+            "btn1_text": "SHOP VELVET",
+            "btn2_text": "VIEW LOOKBOOK"
+          }
         }
       },
-      "block_order": ["cat-1", "cat-2", "cat-3", "cat-4", "stat-1", "stat-2", "stat-3", "test-1", "test-2"]
+      "block_order": ["slide-1", "slide-2", "cat-1", "cat-2", "cat-3", "cat-4", "stat-1", "stat-2", "stat-3", "test-1", "test-2"]
     },
     "full-banner": {
       "type": "vamas-full-banner",
