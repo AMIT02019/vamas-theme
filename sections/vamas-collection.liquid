@@ -68,6 +68,7 @@
   {% comment %} ── Products area ── {% endcomment %}
   <div class="vamas-collection-prod-area">
 
+    {% paginate collection.products by section.settings.products_per_page %}
     <div class="vamas-collection-topbar">
       <div class="vamas-collection-count">
         {{ section.settings.showing_text | default: 'Showing' }}
@@ -87,9 +88,9 @@
           </select>
         </form>
       </div>
+      </div>
     </div>
 
-    {% paginate collection.products by section.settings.products_per_page %}
       <div class="vamas-collection-prod-grid">
         {% if collection.products.size > 0 %}
           {% for product in collection.products %}

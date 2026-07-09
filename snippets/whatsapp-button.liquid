@@ -1,0 +1,37 @@
+<style>
+/* WhatsApp Floating Button */
+.wa-float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+.wa-float-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(37,211,102,0.6);
+  color: white;
+}
+.wa-icon {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+}
+</style>
+
+<a href="https://wa.me/919876543210?text=Hello%20Vamas!%20I%20have%20a%20question%20about%20your%20blouses." target="_blank" class="wa-float-btn" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
+  <svg class="wa-icon" viewBox="0 0 32 32">
+    <path d="M16 3C8.832 3 3 8.832 3 16c0 2.625.77 5.074 2.086 7.129L3.05 28.855 9 26.875C10.973 28.023 13.41 29 16 29c7.168 0 13-5.832 13-13S23.168 3 16 3zm0 2c6.086 0 11 4.914 11 11s-4.914 11-11 11c-2.324 0-4.48-.766-6.25-2.063l-.399-.297-3.586.945.992-2.843-.334-.426A10.945 10.945 0 0 1 5 16C5 9.914 9.914 5 16 5z"/>
+  </svg>
+</a>
